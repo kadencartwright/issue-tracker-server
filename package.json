@@ -1,14 +1,14 @@
 {
   "name": "issue-tracker-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "The back end of my time tracker app",
+  "main": "./dist/app.js",
   "scripts": {
     "dev": "nodemon",
     "tsc": "tsc"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kaden Cartwright",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
