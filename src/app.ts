@@ -1,8 +1,8 @@
 import Express from "express";
 import dotenv from 'dotenv';
-import { connectDB } from "./database/database";
-import UserModel from './database/user/user.model';
-import {IUser} from './database/user/user.types'
+import { connectDB } from "./database";
+import UserModel from './models/user/user.model';
+import {IUser} from './models/user/user.types'
 dotenv.config()
 const PORT = process.env.PORT
 const app = Express()

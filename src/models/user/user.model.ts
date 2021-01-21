@@ -1,5 +1,4 @@
-import { IUserDocument } from './user.types';
-import mongoose, { Schema, Document, Model} from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import UserSchema from './user.schema'
 
 
