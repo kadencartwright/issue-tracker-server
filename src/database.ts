@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
 let database:mongoose.Connection
 
-export const connectDB = () =>{
+export const connectDB = async () =>{
     const uri = "mongodb://localhost:27017/IssueTracker?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
     if (database){
         return
     }
-    mongoose.connect(uri, {
+    await mongoose.connect(uri, {
         useNewUrlParser: true,
         useFindAndModify: true,
         useUnifiedTopology: true,
@@ -20,8 +20,7 @@ export const connectDB = () =>{
         console.log('mongo error')
         console.log(err)
     })
-    
-
+    return database
 }
 export const disconnectDB = () => {
     if (!database) {
