@@ -1,13 +1,23 @@
 import Express from "express";
 import dotenv from 'dotenv';
+import {connectDB,disconnectDB} from "./database"
+import router from './routes/router'
+import bodyparser from 'body-parser'
 dotenv.config()
 const PORT = process.env.PORT
 const app = Express()
+app.use([Express.json(),Express.urlencoded({extended:true})])//parse url and json data
 
-app.get('/',(req,res)=>{
-    res.send('<h1>server is running!</h1>')
-})
+app.use('/',router)
 
-app.listen(PORT,()=>{
+app.listen(PORT,async ()=>{
+    await connectDB()
     console.log(`Server is running on http://localhost:${PORT}`)
 })
+
+//close connection on process interrupt
+process.on('SIGINT',async ()=>{
+    await disconnectDB()
+    process.exit(0)
+})
+

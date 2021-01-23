@@ -1,4 +1,4 @@
-import userModel, { IUser } from './../models/userModel';
+import userModel, { IUser } from '../models/UserModel';
 import { connectDB, disconnectDB} from '../database';
 import faker from 'faker'
 
