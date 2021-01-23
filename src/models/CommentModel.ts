@@ -24,8 +24,8 @@ const options:SchemaOptions = {
 const CommentSchema = new Schema<ICommentDocument, ICommentModel>({
     content:{type:String, required:true},
     author: UserSubsetSchema,
-    parents: [{type: Types._ObjectId}],
-    children: [{type: Types._ObjectId}]
+    parents: [{type: Types._ObjectId, ref:"User" }],
+    children: [{type: Types._ObjectId, ref:"User" }]
 }, options)
 
 export default model<ICommentDocument>("Comment",CommentSchema)

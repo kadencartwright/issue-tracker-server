@@ -52,7 +52,7 @@ const UserSchema = new Schema<IUserDocument, IUserModel>({
 //a schema for the other collections that use this document
 export const UserSubsetSchema = new Schema({
     fullName: { type:"string", required:true },
-    authorId: { type:Types._ObjectId, required:true }
+    authorId: { type:Types._ObjectId, ref:"User", required:true }
 })
 //the associated interface
 export interface IUserSubset{
