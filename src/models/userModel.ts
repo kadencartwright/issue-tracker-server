@@ -1,5 +1,5 @@
-import { Document, Model, model, Types, Schema, Query, SchemaOptions } from "mongoose"
-
+import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
+import { ObjectId } from "mongodb"
 import bcrypt from "bcrypt"
 //interface for the user itself.
 export interface IUser{
@@ -49,6 +49,16 @@ const UserSchema = new Schema<IUserDocument, IUserModel>({
    
 },options)
 
+//a schema for the other collections that use this document
+export const UserSubsetSchema = new Schema({
+    fullName: { type:"string", required:true },
+    authorId: { type:Types._ObjectId, required:true }
+})
+//the associated interface
+export interface IUserSubset{
+    fullName: String,
+    authorId: ObjectId
+}
 
 /**
  * SCHEMA VIRTUALS

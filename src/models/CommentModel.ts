@@ -1,9 +1,12 @@
+import { ObjectId } from "mongodb"
 import { Document, Model, model, Schema, SchemaOptions ,Types} from "mongoose"
-import {IUserDocument } from "./UserModel"
+import {IUserDocument, UserSubsetSchema, IUserSubset } from "./UserModel"
 //interface for the Comment itself.
 export interface IComment{
     content:String,
-    author: IUserDocument["_id"]
+    author: IUserSubset,
+    parents: Array<ObjectId>,
+    children: Array<ObjectId>
 }
 //interface for the document
 export interface ICommentDocument extends IComment,Document{}
@@ -17,22 +20,12 @@ export interface ICommentModel extends Model<ICommentDocument> {}
 const options:SchemaOptions = {
     timestamps:true
 }
+
 const CommentSchema = new Schema<ICommentDocument, ICommentModel>({
     content:{type:String, required:true},
-    author:{type: Types._ObjectId, required:true}
-   
+    author: UserSubsetSchema,
+    parents: [{type: Types._ObjectId}],
+    children: [{type: Types._ObjectId}]
 }, options)
-
-
-/**
- * SCHEMA VIRTUALS
- * computed virtual properties on a document instance
- */
-
-
-/**
- * SCHEMA METHODS
- * methods to run on a document instance
- */
 
 export default model<ICommentDocument>("Comment",CommentSchema)

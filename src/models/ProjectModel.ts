@@ -1,7 +1,13 @@
-import { Document, Model, model, Schema, SchemaOptions } from "mongoose"
+import { Document, Model, model, Schema, SchemaOptions,Types} from "mongoose"
+import { IUserSubset, UserSubsetSchema } from "./UserModel"
 //interface for the Project itself.
 export interface IProject{
     projectName:String,
+    owner: IUserSubset,
+    personnel:{
+        managers: Array<IUserSubset>,
+        developers: Array<IUserSubset>
+    }
 }
 //interface for the document
 export interface IProjectDocument extends IProject,Document{}
@@ -16,21 +22,13 @@ const options:SchemaOptions = {
     timestamps:true
 }
 const ProjectSchema = new Schema<IProjectDocument, IProjectModel>({
-    projectName:{type:String, required:true},
-   
-})
+    projectName: {type:String, required:true},
+    owner: UserSubsetSchema,
+    personnel: {
+        managers:[ UserSubsetSchema ],
+        developers: [ UserSubsetSchema ]
+    }
+},options)
 
-
-/**
- * SCHEMA VIRTUALS
- * computed virtual properties on a document instance
- */
-
-//add some a way to get the project owner?
-
-/**
- * SCHEMA METHODS
- * methods to run on a document instance
- */
 
 export default model<IProjectDocument>("Project",ProjectSchema)
