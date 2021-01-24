@@ -29,6 +29,7 @@ export default class CommentService{
             throw e
         }
     }
+
     updateComment:(id:ObjectId, changes:Partial<IComment>) =>Promise<ICommentDocument> = async function (id:ObjectId, changes:Partial<IComment>){
         try{
             return await CommentModel.findByIdAndUpdate(id,changes).exec()
@@ -36,7 +37,8 @@ export default class CommentService{
             throw e
         }
     }
-    deleteComment:(id:ObjectId)=>Promise<boolean> = async function(id:ObjectId){
+
+    deleteComment:(id:ObjectId)=>void = async function(id:ObjectId){
         try{
             if (id !=undefined){
                 return await CommentModel.deleteOne({_Id:id}).exec()
@@ -47,6 +49,3 @@ export default class CommentService{
     }
 
 }
-
-
-
