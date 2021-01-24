@@ -1,12 +1,13 @@
 import { ObjectId } from "mongodb"
 import { Document, Model, model, Schema, SchemaOptions ,Types} from "mongoose"
-import {IUserDocument, UserSubsetSchema, IUserSubset } from "./UserModel"
+import { UserSubsetSchema, IUserSubset } from "./UserModel"
 //interface for the Comment itself.
 export interface IComment{
+    ticketId: ObjectId
     content:String,
     author: IUserSubset,
-    parents: Array<ObjectId>,
-    children: Array<ObjectId>
+    parent?: ObjectId,
+    children?: Array<ObjectId>
 }
 //interface for the document
 export interface ICommentDocument extends IComment,Document{}
@@ -22,9 +23,10 @@ const options:SchemaOptions = {
 }
 
 const CommentSchema = new Schema<ICommentDocument, ICommentModel>({
+    ticketId: {type: Types._ObjectId, ref:"Ticket", required:true },
     content:{type:String, required:true},
     author: UserSubsetSchema,
-    parents: [{type: Types._ObjectId, ref:"User" }],
+    parent: {type: Types._ObjectId, ref:"User" },
     children: [{type: Types._ObjectId, ref:"User" }]
 }, options)
 

@@ -2,7 +2,6 @@ import Express from "express";
 import dotenv from 'dotenv';
 import {connectDB,disconnectDB} from "./database"
 import router from './routes/router'
-import bodyparser from 'body-parser'
 dotenv.config()
 const PORT = process.env.PORT
 const app = Express()

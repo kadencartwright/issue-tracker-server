@@ -15,7 +15,6 @@ export default class AuthService{
             return null
         }
     }
-
 }
 //auth helper interface
 export interface ILogin{
