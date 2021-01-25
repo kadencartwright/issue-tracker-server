@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 let database:mongoose.Connection
 
 export const connectDB:()=>Promise<mongoose.Connection> =  async () =>{
-    const uri = "mongodb://localhost:27017/IssueTracker?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
+    const uri = process.env.MONGO_STRING
     if (database){
         return
     }
