@@ -19,6 +19,8 @@ apiRouter.post('/comments',CommentController.createComment.validator, CommentCon
 apiRouter.put('/comments', CommentController.updateComment.validator, CommentController.updateComment.handler)
 apiRouter.delete('/comments', CommentController.deleteComment.validator, CommentController.deleteComment.handler)
 
+//user crud routes
+apiRouter.get('/users/:id',)
 
 
 export default router

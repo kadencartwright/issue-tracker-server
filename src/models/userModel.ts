@@ -1,6 +1,7 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
 import bcrypt from "bcrypt"
+
 //interface for the user itself.
 export interface IUser{
     name: {

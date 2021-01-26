@@ -1,11 +1,9 @@
 import { ObjectId } from 'mongodb';
-import {Service} from 'typedi';
+import Container, {Service} from 'typedi';
 import CommentModel, {IComment, ICommentDocument} from "../models/CommentModel"
 
 @Service()
 export default class CommentService{
-    constructor(){}
-
     createComment: (comment:IComment)=> Promise<ICommentDocument> = async function(comment:IComment){
         try{
             return await CommentModel.create(comment)
@@ -14,9 +12,9 @@ export default class CommentService{
         }
     }
 
-    findComments:(comment:Partial<IComment>)=>Promise<Array<ICommentDocument>> = async function(comment:Partial<IComment>){
+    findComments:(commentPartial:Partial<IComment>)=>Promise<Array<ICommentDocument>> = async function(commentPartial:Partial<IComment>){
         try{
-            return await CommentModel.find({...comment}).exec()
+            return await CommentModel.find({...commentPartial}).exec()
         }catch(e){
             throw e
         }
