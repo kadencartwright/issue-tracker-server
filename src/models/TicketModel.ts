@@ -1,10 +1,11 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
+import { IUserSubset, UserSubsetSchema } from "./UserModel"
 //interface for the Ticket itself.
 export interface ITicket{
     projectId: ObjectId
     title: String,
-    assignedTo: ObjectId,
+    assignedTo: IUserSubset,
     description: String
 }
 //interface for the document
@@ -20,9 +21,9 @@ const options:SchemaOptions = {
     timestamps:true
 }
 const TicketSchema = new Schema<ITicketDocument, ITicketModel>({
-    projectId: {type: Types._ObjectId, ref:"Projects"},
+    projectId: {type: Types.ObjectId, ref:"Projects"},
     title: {type: String, required: true},
-    assignedTo: {type: Types._ObjectId, ref:"User"},
+    assignedTo: UserSubsetSchema,
     description: {type: String}
 },options)
 
