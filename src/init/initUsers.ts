@@ -1,5 +1,6 @@
 import UserModel, { IUser} from '../models/UserModel';
 import faker from 'faker'
+import fs from 'fs'
 
 const initUsers:()=>void = async function(){
     console.log('creating fake users')
@@ -15,7 +16,10 @@ const initUsers:()=>void = async function(){
     for (let i = 0; i<10;i++){
         users.push(fakeUser())
     }
+
     await UserModel.create(users)
+    let output = JSON.stringify(users)
+    fs.writeFileSync('./users.json',output)
 }
 
 export default initUsers
