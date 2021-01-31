@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express'
-import AuthController from '@controllers/AuthController'
-import CommentController from '@controllers/CommentController'
-import UserController from '@controllers/UserController'
+import AuthController from '../controllers/AuthController'
+import CommentController from '../controllers/CommentController'
+import UserController from '../controllers/UserController'
 const router:Router = Router();
 const apiRouter:Router = Router();
 //use apiRouter as an abstraction for the `/api/v1` prefix so we only have to write it once

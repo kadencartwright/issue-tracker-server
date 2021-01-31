@@ -1,9 +1,8 @@
 import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,param,ValidationChain} from 'express-validator'
-import CommentService from '@services/CommentService';
-import UserService from '@services/UserService';
-import { IComment, ICommentDocument } from '@models/CommentModel';
+import CommentService from '../services/CommentService';
+import { IComment, ICommentDocument } from '../models/CommentModel';
 import { ObjectId } from 'mongodb';
 /**
  * the structure of this controller is such that any function that depends on validation of parameters should define BOTH 

@@ -1,7 +1,7 @@
 import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {check,ValidationChain} from 'express-validator'
-import AuthService, {ILogin} from '@services/AuthService';
+import AuthService, {ILogin} from '../services/AuthService';
 /**
  * the structure of this controller is such that any function that depends on validation of parameters should define BOTH 
  *      a handler function 

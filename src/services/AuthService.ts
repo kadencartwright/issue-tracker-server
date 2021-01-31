@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import UserModel,{IUser, IUserDocument} from '@models/UserModel'
+import UserModel,{IUser, IUserDocument} from '../models/UserModel'
 import {Service} from 'typedi';
 
 @Service()

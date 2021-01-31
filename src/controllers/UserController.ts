@@ -1,8 +1,8 @@
 import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,CustomValidator,param,ValidationChain} from 'express-validator'
-import UserService from '@services/UserService';
-import { IUser, IUserDocument } from '@models/UserModel';
+import UserService from '../services/UserService';
+import { IUser, IUserDocument } from '../models/UserModel';
 import { ObjectId } from 'mongodb';
 import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/schema';
 /**

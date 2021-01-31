@@ -1,4 +1,4 @@
-import UserModel,{IUser, IUserDocument} from '@models/UserModel'
+import UserModel,{IUser, IUserDocument} from '../models/UserModel'
 import {Service} from 'typedi';
 import { ObjectId } from 'mongodb';
 
