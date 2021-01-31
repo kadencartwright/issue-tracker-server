@@ -1,7 +1,8 @@
 import { Request,Response } from 'express';
 import {Container} from 'typedi'
-import {check,ValidationChain} from 'express-validator'
+import {body, check,param,ValidationChain} from 'express-validator'
 import CommentService from '@services/CommentService';
+import UserService from '@services/UserService';
 import { IComment, ICommentDocument } from '@models/CommentModel';
 import { ObjectId } from 'mongodb';
 /**
@@ -11,29 +12,35 @@ import { ObjectId } from 'mongodb';
  */
 
 const createCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const comment:IComment = req.body.comment
-    const commentService:CommentService = Container.get(CommentService)
-    const commentDoc:ICommentDocument = await commentService.createComment(comment)
-    res.json(commentDoc)
+    try{
+        const comment:IComment = req.body.comment
+        const commentService:CommentService = Container.get(CommentService)
+        const commentDoc:ICommentDocument = await commentService.createComment(comment)
+        res.json(commentDoc)
+    }catch(e){
+        console.log(e)
+        res.status(500).send('whoops, there was an error on our end. Try your request again.')
+    }
+
 }
 const createCommentValidator:Array<ValidationChain>=[
-    check('content').exists(),
-    check('content').isString(),
+    check('content').exists().isString().escape().trim(),
     check('author').exists(),
-    check('author').isMongoId()
 ]
 
 const updateCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const commentId:ObjectId = req.body.commentId
-    const updates:Partial<IComment> = req.body.updates
+    const updates:Partial<IComment> = {
+        content:req.body.content
+    }
     const commentService:CommentService = Container.get(CommentService)
     const commentDoc:ICommentDocument = await commentService.updateComment(commentId,updates)
     res.json(commentDoc)
 }
 const updateCommentValidator:Array<ValidationChain>=[
-    check('updates').exists(),
-    check('commentId').exists(),
-    check('commentId').isMongoId()
+    //need custom sanitizer
+    body('content').exists().isString().escape().trim(),
+    param('id').exists().isMongoId()
 ]
 
 const deleteCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
@@ -48,9 +55,7 @@ const deleteCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
     }
 }
 const deleteCommentValidator:Array<ValidationChain>=[
-    check('updates').exists(),
-    check('commentId').exists(),
-    check('commentId').isMongoId()
+    check('commentId').exists().isMongoId()
 ]
 
 const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{

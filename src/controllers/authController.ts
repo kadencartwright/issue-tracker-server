@@ -14,12 +14,11 @@ const loginHandler:(req:Request,res:Response)=>void = async(req:Request,res:Resp
     let user =(await authService.login(creds)).toJSON()
         let userFiltered =(({name,email})=>({name,email}))(user)
     res.json({userFiltered})
+    //need to set token or cookie
 }
 const loginValidator:Array<ValidationChain>=[
-    check('email').exists(),
-    check('password').exists(),
-    check('email').isEmail(),
-    check('password').isAlphanumeric()
+    check('email').exists().isEmail(),
+    check('password').exists().isLength({min:8,max:256})
 ]
 
 export default {
