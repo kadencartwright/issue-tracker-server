@@ -20,7 +20,7 @@ import UserModel, { IUserDocument, IUserSubset } from '../models/UserModel'
             return project
         } 
         for (let user of users){
-            projects.push(fakeProject({userId:user.id,fullName:`${user.name.first} ${user.name.last}`}))
+            projects.push(fakeProject({userId:user.id,name:user.name}))
         }
         await ProjectModel.create(projects)
         await ProjectModel.find({}).exec()

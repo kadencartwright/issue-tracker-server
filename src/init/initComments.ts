@@ -10,14 +10,6 @@ import TicketModel, { ITicketDocument } from '../models/TicketModel';
         console.log('ffound tickets!')
         let comments: Array<IComment> = [];
         let fakeComment:(ticket:ITicketDocument)=>IComment = (ticket:ITicketDocument)=>{
-            /**
-             * 
-    ticketId: {type: Types.ObjectId, ref:"Ticket", required:true },
-    content:{type:String, required:true},
-    author: UserSubsetSchema,
-    parent: {type: Types.ObjectId, ref:"User" },
-    children: [{type: Types.ObjectId, ref:"User" }]
-             */
             const comment:IComment = {
                     ticketId: ticket.id,
                     content: faker.random.words(20),
@@ -28,8 +20,10 @@ import TicketModel, { ITicketDocument } from '../models/TicketModel';
         }
 
         for (let ticket of tickets){
-            console.log(ticket)
-            comments.push(fakeComment(ticket))
+            let numComments = Math.floor(Math.random() * 10)+1;
+            for (let i = 0; i< numComments; i++){
+                comments.push(fakeComment(ticket))
+            }
         }
         
         await CommentModel.create(comments)

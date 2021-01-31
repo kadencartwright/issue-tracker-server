@@ -6,10 +6,7 @@ const initUsers:()=>void = async function(){
     let users: Array<IUser> = [];
     let fakeUser:()=>IUser = ()=>{
         const user:IUser = {
-            name:{
-                first: faker.name.firstName(),
-                last: faker.name.lastName()
-            },
+            name:`${faker.name.firstName()} ${faker.name.lastName()}`,
             email:faker.internet.email(),
             password: faker.internet.password()
         }

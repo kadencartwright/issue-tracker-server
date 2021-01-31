@@ -4,10 +4,7 @@ import bcrypt from "bcrypt"
 
 //interface for the user itself.
 export interface IUser{
-    name: {
-        first:String,
-        last:String
-    }
+    name: String
     email: String,
     password: String
 }
@@ -40,10 +37,7 @@ const options:SchemaOptions = {
     timestamps:true
 }
 const UserSchema = new Schema<IUserDocument, IUserModel>({
-    name:{
-        first: {type:String,required: true, set:toLower},
-        last: {type:String,required: true, set:toLower}
-    },
+    name:{type:String,required: true},
     email:{type:String,required: true , unique:true , set:toLower},
     password : {type:String,required: true,set:hashPassword}
 
@@ -52,31 +46,13 @@ const UserSchema = new Schema<IUserDocument, IUserModel>({
 
 //a schema for the other collections that use this document
 export const UserSubsetSchema = new Schema({
-    fullName: { type:"string", required:true },
+    name: { type:"string", required:true },
     userId: { type:Types.ObjectId, ref:"User", required:true }
 })
 //the associated interface
 export interface IUserSubset{
-    fullName: String,
+    name: String,
     userId: {type:ObjectId}
 }
-
-/**
- * SCHEMA VIRTUALS
- * computed virtual properties on a document instance
- */
-let virtualFullName = UserSchema.virtual("fullName")
-virtualFullName.get(function(){
-    return `${this.name.first} ${this.name.last}`
-})
-
-virtualFullName.set(function(fullName){
-    [this.name.first,this.name.last] = fullName.split(' ')
-})
-
-/**
- * SCHEMA METHODS
- * methods to run on a document instance
- */
 
 export default model<IUserDocument>("User",UserSchema)
