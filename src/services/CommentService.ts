@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
-import CommentModel, {IComment, ICommentDocument} from "../models/CommentModel"
+import CommentModel, {IComment, ICommentDocument} from "@models/CommentModel"
 
 @Service()
 export default class CommentService{

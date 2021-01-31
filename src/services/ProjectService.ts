@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
-import ProjectModel, {IProject, IProjectDocument} from "../models/ProjectModel"
+import ProjectModel, {IProject, IProjectDocument} from "@models/ProjectModel"
 
 @Service()
 export default class ProjectService{

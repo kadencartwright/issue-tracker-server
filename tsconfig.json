@@ -16,6 +16,12 @@
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@controllers/*": ["controllers/*"],
+      "@models/*" :["models/*"],
+      "@services/*": ["services/*"]
+    }
   },
   "watchOptions": {
     "watchDirectory": "usefsevents",
