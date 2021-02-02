@@ -10,7 +10,8 @@ app.use([Express.json(),Express.urlencoded({extended:true})])//parse url and jso
 app.use('/',router)
 
 app.listen(PORT,async ()=>{
-    await connectDB()
+    await connectDB(process.env.MONGO_STRING)
+
     console.log(`Server is running on http://localhost:${PORT}`)
 })
 

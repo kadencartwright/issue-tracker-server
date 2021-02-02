@@ -8,16 +8,27 @@ import { connectDB, disconnectDB} from '../database';
 
 dotenv.config();
 
-(async()=>{
-    await connectDB()
+
+export default async function initDb(){
     console.log('initializing users!')
-    await initUsers()
+    let users = await initUsers()
     console.log('initializing projects!')
     await initProjects()
     console.log('initializing tickets!')
     await initTickets()
     console.log('initializing comments!')
     await initComments()
-    disconnectDB()
-    process.exit()
-})();
+
+    return users
+
+};
+/*
+(
+    async ()=>{
+        await connectDB(process.env.MONGO_STRING)
+        await initDb()
+        disconnectDB()
+        process.exit()
+    }
+)()
+*/

@@ -1,8 +1,7 @@
 import mongoose from 'mongoose'
 let database:mongoose.Connection
 
-export const connectDB:()=>Promise<mongoose.Connection> =  async () =>{
-    const uri = process.env.MONGO_STRING
+export const connectDB:(uri:string)=>Promise<mongoose.Connection> =  async (uri?:string) =>{    
     if (database){
         return
     }

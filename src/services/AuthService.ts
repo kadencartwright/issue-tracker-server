@@ -8,6 +8,7 @@ export default class AuthService{
     
     login: (creds:ILogin)=>Promise<IUserDocument|null> = async function(creds:ILogin){
         let user:IUserDocument =  await UserModel.findOne({email: creds.email.toLowerCase()}).exec()
+        if (!user) return null; 
         let validPass:boolean = await bcrypt.compare(creds.password,user.password.toString())
         if (validPass){
             return user
