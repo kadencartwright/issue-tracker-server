@@ -10,6 +10,9 @@ import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/sche
  *      a handler function 
  *      and array of express-validator.ValidationChain functions
  */
+/**
+ * CREATE
+ */
 
 const createUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const user:IUser = req.body
@@ -22,6 +25,9 @@ const createUserValidator:Array<ValidationChain>=[
     check('name').exists().isAlphanumeric().trim(),
     check('password').exists().isLength({max:256,min:8}).trim().escape()
 ]
+/**
+ * READ
+ */
 const getUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     try{
         const userId:ObjectId = new ObjectId(req.params.id)
@@ -36,6 +42,9 @@ const getUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Re
 const getUserValidator:Array<ValidationChain> = [
     param('id').exists().isMongoId()
 ]
+/**
+ * UPDATE
+ */
 
 const updateUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const userId:ObjectId = req.body.userId
@@ -62,7 +71,9 @@ const updateUserValidator:Array<ValidationChain>=[
     body('password').optional().isLength({max:256,min:8}).trim().escape(),
     param('userId').exists().isMongoId(),
 ]
-
+/**
+ * DELETE
+ */
 const deleteUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const userId:ObjectId = new ObjectId(req.params.id)
     const userService:UserService = Container.get(UserService)
@@ -83,7 +94,7 @@ const deleteUserValidator:Array<ValidationChain>=[
 
 export default {
     createUser:{ handler:createUserHandler , validator: createUserValidator},
+    getUser: { handler: getUserHandler, validator: getUserValidator },
     updateUser:{ handler:updateUserHandler , validator: updateUserValidator},
-    deleteUser: { handler:deleteUserHandler, validator: deleteUserValidator},
-    getUser: { handler: getUserHandler, validator: getUserValidator }
+    deleteUser: { handler:deleteUserHandler, validator: deleteUserValidator}
 }
