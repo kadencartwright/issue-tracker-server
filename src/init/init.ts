@@ -22,13 +22,11 @@ export default async function initDb(){
     return users
 
 };
-/*
-(
-    async ()=>{
+
+(async ()=>{
         await connectDB(process.env.MONGO_STRING)
         await initDb()
         disconnectDB()
         process.exit()
     }
 )()
-*/

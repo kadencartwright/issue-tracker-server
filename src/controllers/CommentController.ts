@@ -20,7 +20,6 @@ const createCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
         console.log(e)
         res.status(500).send('whoops, there was an error on our end. Try your request again.')
     }
-
 }
 const createCommentValidator:Array<ValidationChain>=[
     check('content').exists().isString().escape().trim(),
@@ -68,12 +67,14 @@ const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res
         res.status(404).send()
     }
 }
-
+const getCommentValidator:Array<ValidationChain>=[
+    param('id').exists().isMongoId()
+]
 
 
 export default {
     createComment:{ handler:createCommentHandler , validator: createCommentValidator},
     updateComment:{ handler:updateCommentHandler , validator: updateCommentValidator},
     deleteComment: { handler:deleteCommentHandler, validator: deleteCommentValidator},
-    getComment: { handler: getCommentHandler} // no validation needed because there is no request body
+    getComment: { handler: getCommentHandler, validator: getCommentValidator} 
 }
