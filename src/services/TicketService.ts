@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
-import TicketModel, {ITicket, ITicketDocument} from "@models/TicketModel"
+import TicketModel, {ITicket, ITicketDocument} from "../models/TicketModel"
 
 @Service()
 export default class TicketService{
