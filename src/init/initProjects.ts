@@ -1,14 +1,14 @@
-import ProjectModel, { IProject, IProjectDocument } from '../models/ProjectModel';
+import ProjectModel, { IProject} from '../models/ProjectModel';
 import faker from 'faker'
-import UserModel, { IUserDocument, IUserSubset } from '../models/UserModel'
+import UserModel, { IUser, IUserSubset } from '../models/UserModel'
 
     const initProjects:()=>void = async function(){
         console.log('creating fake Projects')
-        let users:Array<IUserDocument> = await UserModel.find({}).exec()
+        let users:Array<IUser> = await UserModel.find({}).exec()
         let projects: Array<IProject> = [];
-        let fakeProject:(subset:IUserSubset)=>IProject = (subset:IUserSubset)=>{
+        let fakeProject:(subset:IUserSubset)=>Partial<IProject> = (subset:IUserSubset)=>{
             
-            const project:IProject = {
+            const project:Partial<IProject> = {
                     projectName: faker.random.words(2),
                     owner: subset,
                     personnel:{
@@ -20,7 +20,8 @@ import UserModel, { IUserDocument, IUserSubset } from '../models/UserModel'
             return project
         } 
         for (let user of users){
-            projects.push(fakeProject({userId:user.id,name:user.name}))
+            //TODO fix this
+            projects.push(fakeProject({id:user.id,name:user.name}))
         }
         await ProjectModel.create(projects)
         await ProjectModel.find({}).exec()

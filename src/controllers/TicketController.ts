@@ -2,7 +2,7 @@ import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,param,ValidationChain} from 'express-validator'
 import TicketService from '../services/TicketService';
-import { ITicket, ITicketDocument } from '../models/TicketModel';
+import { ITicket} from '../models/TicketModel';
 import { ObjectId } from 'mongodb';
 
 /**
@@ -14,7 +14,7 @@ import { ObjectId } from 'mongodb';
 const createTicketHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const ticket:ITicket = req.body
     const ticketService:TicketService = Container.get(TicketService)
-    const ticketDoc:ITicketDocument = await ticketService.createTicket(ticket)
+    const ticketDoc:ITicket = await ticketService.createTicket(ticket)
     res.json(ticketDoc)
 }
 const createTicketValidator:Array<ValidationChain>=[

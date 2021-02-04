@@ -2,7 +2,7 @@ import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,param,ValidationChain} from 'express-validator'
 import CommentService from '../services/CommentService';
-import { IComment, ICommentDocument } from '../models/CommentModel';
+import { IComment} from '../models/CommentModel';
 import { ObjectId } from 'mongodb';
 /**
  * the structure of this controller is such that any function that depends on validation of parameters should define BOTH 
@@ -14,7 +14,7 @@ const createCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
     try{
         const comment:IComment = req.body.comment
         const commentService:CommentService = Container.get(CommentService)
-        const commentDoc:ICommentDocument = await commentService.createComment(comment)
+        const commentDoc:IComment = await commentService.createComment(comment)
         res.json(commentDoc)
     }catch(e){
         console.log(e)
@@ -32,7 +32,7 @@ const updateCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
         content:req.body.content
     }
     const commentService:CommentService = Container.get(CommentService)
-    const commentDoc:ICommentDocument = await commentService.updateComment(commentId,updates)
+    const commentDoc:IComment = await commentService.updateComment(commentId,updates)
     res.json(commentDoc)
 }
 const updateCommentValidator:Array<ValidationChain>=[
@@ -70,6 +70,7 @@ const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res
 const getCommentValidator:Array<ValidationChain>=[
     param('id').exists().isMongoId()
 ]
+
 
 
 export default {

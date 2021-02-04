@@ -3,18 +3,17 @@ import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,param,ValidationChain} from 'express-validator'
 import ProjectService from '../services/ProjectService';
-import { IProject, IProjectDocument } from '../models/ProjectModel';
+import { IProject } from '../models/ProjectModel';
 import { ObjectId } from 'mongodb';
 /**
  * the structure of this controller is such that any function that depends on validation of parameters should define BOTH 
  *      a handler function 
  *      and array of express-validator.ValidationChain functions
  */
-
 const createProjectHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const project:IProject = req.body
     const projectService:ProjectService = Container.get(ProjectService)
-    const projectDoc:IProjectDocument = await projectService.createProject(project)
+    const projectDoc:IProject = await projectService.createProject(project)
     res.json(projectDoc)
 }
 const createProjectValidator:Array<ValidationChain>=[
@@ -36,6 +35,22 @@ const getProjectHandler:(req:Request,res:Response)=>void = async(req:Request,res
 const getProjectValidator:Array<ValidationChain> = [
     param('id').exists().isMongoId()
 ]
+
+const getProjectsHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
+    try{
+        const project:Partial<IProject> = req.body
+        const projectService:ProjectService = Container.get(ProjectService)
+        const projects = await projectService.findProjects({...project})
+        res.status(200).json(projects)
+    }catch(e){
+        console.error(e)
+        res.status(404).send()
+    }
+}
+const getProjectsValidator:Array<ValidationChain> = [
+    //TODO need to create custom validators for objects nested
+]
+
 
 const updateProjectHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const projectId:ObjectId = req.body.projectId
@@ -85,5 +100,6 @@ export default {
     createProject:{ handler:createProjectHandler , validator: createProjectValidator},
     updateProject:{ handler:updateProjectHandler , validator: updateProjectValidator},
     deleteProject: { handler:deleteProjectHandler, validator: deleteProjectValidator},
-    getProject: { handler: getProjectHandler, validator: getProjectValidator }
+    getProject: { handler: getProjectHandler, validator: getProjectValidator },
+    getProjects:{ handler: getProjectsHandler, validator: getProjectsValidator },
 }

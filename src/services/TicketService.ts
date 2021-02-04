@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
-import TicketModel, {ITicket, ITicketDocument} from "../models/TicketModel"
+import TicketModel, {ITicket} from "../models/TicketModel"
 
 @Service()
 export default class TicketService{
-    createTicket: (ticket:ITicket)=> Promise<ITicketDocument> = async function(ticket:ITicket){
+    createTicket: (ticket:ITicket)=> Promise<ITicket> = async function(ticket:ITicket){
         try{
             return await TicketModel.create(ticket)
         }catch(e){
@@ -12,15 +12,16 @@ export default class TicketService{
         }
     }
 
-    findTickets:(ticketPartial:Partial<ITicket>)=>Promise<Array<ITicketDocument>> = async function(ticketPartial:Partial<ITicket>){
+    findTickets:(ticketPartial:Partial<ITicket>)=>Promise<Array<ITicket>> = async function(ticketPartial:Partial<ITicket>){
         try{
-            return await TicketModel.find({...ticketPartial}).exec()
+            //TODO fix this
+            return await TicketModel.find({}).exec()
         }catch(e){
             throw e
         }
     }
 
-    findTicketById:(id:ObjectId)=>Promise<Array<ITicketDocument>> = async function(id:ObjectId){
+    findTicketById:(id:ObjectId)=>Promise<Array<ITicket>> = async function(id:ObjectId){
         try{
             return await TicketModel.findById(id).exec()
         }catch(e){
@@ -28,7 +29,7 @@ export default class TicketService{
         }
     }
 
-    updateTicket:(id:ObjectId, changes:Partial<ITicket>) =>Promise<ITicketDocument> = async function (id:ObjectId, changes:Partial<ITicket>){
+    updateTicket:(id:ObjectId, changes:Partial<ITicket>) =>Promise<ITicket> = async function (id:ObjectId, changes:Partial<ITicket>){
         try{
             return await TicketModel.findByIdAndUpdate(id,changes).exec()
         }catch(e){

@@ -34,6 +34,7 @@ apiRouter.put('/users',UserController.updateUser.validator,UserController.update
 apiRouter.delete('/users/:id',UserController.deleteUser.validator,UserController.deleteUser.handler)
 
 //project crud routes
+apiRouter.get('/projects',ProjectController.getProjects.validator,ProjectController.getProjects.handler)
 apiRouter.get('/projects/:id',ProjectController.getProject.validator,ProjectController.getProject.handler)
 apiRouter.post('/projects',ProjectController.createProject.validator,ProjectController.createProject.handler)
 apiRouter.put('/projects',ProjectController.updateProject.validator,ProjectController.updateProject.handler)
@@ -47,5 +48,8 @@ apiRouter.put('/tickets',TicketController.updateTicket.validator,TicketControlle
 apiRouter.delete('/tickets/:id',TicketController.deleteTicket.validator,TicketController.deleteTicket.handler)
 
 //self routes
+apiRouter.get('/me')
+apiRouter.get('/me/tickets')
+apiRouter.get('/me/projects')
 
 export default router

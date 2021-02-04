@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
-import CommentModel, {IComment, ICommentDocument} from "../models/CommentModel"
+import CommentModel, {IComment} from "../models/CommentModel"
 
 @Service()
 export default class CommentService{
-    createComment: (comment:IComment)=> Promise<ICommentDocument> = async function(comment:IComment){
+    createComment: (comment:IComment)=> Promise<IComment> = async function(comment:IComment){
         try{
             return await CommentModel.create(comment)
         }catch(e){
@@ -12,23 +12,25 @@ export default class CommentService{
         }
     }
 
-    findComments:(commentPartial:Partial<IComment>)=>Promise<Array<ICommentDocument>> = async function(commentPartial:Partial<IComment>){
+    findComments:(commentPartial:Partial<IComment>)=>Promise<Array<IComment>> = async function(commentPartial:Partial<IComment>){
         try{
-            return await CommentModel.find({...commentPartial}).exec()
+            //TODO FIX THIS
+            return await CommentModel.find({}).exec()
         }catch(e){
             throw e
         }
     }
 
-    findCommentById:(id:ObjectId)=>Promise<Array<ICommentDocument>> = async function(id:ObjectId){
+    findCommentById:(id:ObjectId)=>Promise<Array<IComment>> = async function(id:ObjectId){
         try{
             return await CommentModel.findById(id).exec()
         }catch(e){
             throw e
         }
     }
+    //TODO add find comments by user id or user obj
 
-    updateComment:(id:ObjectId, changes:Partial<IComment>) =>Promise<ICommentDocument> = async function (id:ObjectId, changes:Partial<IComment>){
+    updateComment:(id:ObjectId, changes:Partial<IComment>) =>Promise<IComment> = async function (id:ObjectId, changes:Partial<IComment>){
         try{
             return await CommentModel.findByIdAndUpdate(id,changes).exec()
         }catch(e){

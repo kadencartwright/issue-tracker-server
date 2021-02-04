@@ -2,7 +2,7 @@ import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,CustomValidator,param,ValidationChain} from 'express-validator'
 import UserService from '../services/UserService';
-import { IUser, IUserDocument } from '../models/UserModel';
+import { IUser } from '../models/UserModel';
 import { ObjectId } from 'mongodb';
 import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/schema';
 /**
@@ -17,7 +17,7 @@ import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/sche
 const createUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const user:IUser = req.body
     const userService:UserService = Container.get(UserService)
-    const userDoc:IUserDocument = await userService.createUser(user)
+    const userDoc:IUser = await userService.createUser(user)
     res.json(userDoc)
 }
 const createUserValidator:Array<ValidationChain>=[

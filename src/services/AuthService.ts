@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import UserModel,{IUser, IUserDocument} from '../models/UserModel'
+import UserModel,{IUser} from '../models/UserModel'
 import {Service} from 'typedi';
 import jwt from 'jsonwebtoken'
 @Service()
@@ -7,7 +7,7 @@ export default class AuthService{
     constructor(){}
     
     login: (creds:ILogin)=>Promise<String|null> = async function(creds:ILogin){
-        let user:IUserDocument =  await UserModel.findOne({email: creds.email.toLowerCase()}).exec()
+        let user:IUser =  await UserModel.findOne({email: creds.email.toLowerCase()}).exec()
         if (!user) return null; 
         let validPass:boolean = await bcrypt.compare(creds.password,user.password.toString())
         if (validPass){
@@ -17,10 +17,11 @@ export default class AuthService{
             return null
         }
     }
-    generateToken: (user:IUserDocument,admin:Boolean) =>String = function(user:IUserDocument,admin:Boolean){
+    generateToken: (user:IUser,admin:Boolean) =>String = function(user:IUser,admin:Boolean){
         let payload:any = {
             name: user.name,
-            email: user.email
+            email: user.email,
+            id: user._id
         }
         if (admin){payload.admin = admin}
         return jwt.sign(payload,process.env.JWT_SECRET)

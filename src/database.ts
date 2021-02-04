@@ -17,9 +17,7 @@ export const connectDB:(uri:string)=>Promise<mongoose.Connection> =  async (uri?
     }
     
     database = mongoose.connection
-    database.on('open',async ()=>{
-        console.log('Mongo Connected!')
-    })
+    console.log('Mongo Connected!')
     database.on('error',(err)=>{
         console.log('mongo error')
         console.log(err)

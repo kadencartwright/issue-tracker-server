@@ -1,16 +1,16 @@
-import CommentModel, { IComment, ICommentDocument } from '../models/CommentModel';
+import CommentModel, { IComment} from '../models/CommentModel';
 
 import faker from 'faker'
-import TicketModel, { ITicketDocument } from '../models/TicketModel';
+import TicketModel, { ITicket } from '../models/TicketModel';
 
     const initComments:()=>void = async function(){
         console.log('creating fake Comments')
 
-        let tickets:Array<ITicketDocument> = await TicketModel.find({}).exec()
+        let tickets:Array<ITicket> = await TicketModel.find({}).exec()
         console.log('ffound tickets!')
-        let comments: Array<IComment> = [];
-        let fakeComment:(ticket:ITicketDocument)=>IComment = (ticket:ITicketDocument)=>{
-            const comment:IComment = {
+        let comments: Array<Partial<IComment>> = [];
+        let fakeComment:(ticket:ITicket)=>Partial<IComment> = (ticket:ITicket)=>{
+            const comment:Partial<IComment> =  {
                     ticketId: ticket.id,
                     content: faker.random.words(20),
                     author: ticket.assignedTo,
