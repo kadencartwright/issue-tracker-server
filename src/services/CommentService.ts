@@ -16,7 +16,6 @@ export default class CommentService{
 
     findCommentsByUser:(userId:IUserSubset['id'])=>Promise<Array<IComment>> = async function(userId:IUserSubset['id']){
         try{
-            //TODO FIX THIS
             //return await CommentModel.find({author.id}).exec()
            return await CommentModel.find({"author.id":userId}).exec()
         }catch(e){
@@ -25,7 +24,6 @@ export default class CommentService{
     }
     findCommentsByTicket:(ticketId:ObjectId)=>Promise<Array<IComment>> = async function(ticketId:ObjectId){
         try{
-            //TODO FIX THIS
             //return await CommentModel.find({author.id}).exec()
            return await CommentModel.find({"ticketId": ticketId}).exec()
         }catch(e){
@@ -34,14 +32,14 @@ export default class CommentService{
     }
     
 
-    findCommentById:(id:ObjectId)=>Promise<Array<IComment>> = async function(id:ObjectId){
+    findCommentById:(id:ObjectId)=>Promise<IComment> = async function(id:ObjectId){
         try{
             return await CommentModel.findById(id).exec()
         }catch(e){
             throw e
         }
     }
-    //TODO add find comments by user id or user obj
+
 
     updateComment:(id:ObjectId, changes:Partial<IComment>) =>Promise<IComment> = async function (id:ObjectId, changes:Partial<IComment>){
         try{

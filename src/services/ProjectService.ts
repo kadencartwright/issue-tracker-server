@@ -14,8 +14,14 @@ export default class ProjectService{
 
     findProjects:(projectPartial:Partial<IProject>)=>Promise<Array<IProject>> = async function(projectPartial:Partial<IProject>){
         try{
-            //TODO fix this
-            return await ProjectModel.find({}).exec()
+                let query
+                let accepted =['projectName','owner','personnel'] 
+                for (let key of Object.keys(projectPartial)){
+                    if (key in accepted){
+                        query[key] = projectPartial[key]
+                    }
+                }
+            return await ProjectModel.find(query).exec()
         }catch(e){
             throw e
         }
@@ -28,7 +34,6 @@ export default class ProjectService{
             throw e
         }
     }    
-    //TODO add find project by user id or user obj
 
 
     updateProject:(id:ObjectId, changes:Partial<IProject>) =>Promise<IProject> = async function (id:ObjectId, changes:Partial<IProject>){

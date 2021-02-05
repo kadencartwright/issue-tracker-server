@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import Container, {Service} from 'typedi';
 import TicketModel, {ITicket} from "../models/TicketModel"
+import {IUserSubset} from '../models/UserModel'
 
 @Service()
 export default class TicketService{
@@ -14,8 +15,14 @@ export default class TicketService{
 
     findTickets:(ticketPartial:Partial<ITicket>)=>Promise<Array<ITicket>> = async function(ticketPartial:Partial<ITicket>){
         try{
-            //TODO fix this
-            return await TicketModel.find({}).exec()
+            let query
+            let accepted =['assignedTo','projectId'] 
+            for (let key of Object.keys(ticketPartial)){
+                if (key in accepted){
+                    query[key] = ticketPartial[key]
+                }
+            }
+            return await TicketModel.find(query).exec()
         }catch(e){
             throw e
         }
@@ -24,6 +31,22 @@ export default class TicketService{
     findTicketById:(id:ObjectId)=>Promise<Array<ITicket>> = async function(id:ObjectId){
         try{
             return await TicketModel.findById(id).exec()
+        }catch(e){
+            throw e
+        }
+    }
+    findTicketsByUser:(userId)=>Promise<Array<ITicket>> = async function(userId:IUserSubset['id']){
+        try{
+            //return await CommentModel.find({author.id}).exec()
+           return await TicketModel.find({"assignedTo.id":userId}).exec()
+        }catch(e){
+            throw e
+        }
+    }
+    findTicketsByProject:(projectId:ObjectId)=>Promise<Array<ITicket>> = async function(projectId:ObjectId){
+        try{
+            //return await CommentModel.find({author.id}).exec()
+           return await TicketModel.find({projectId: projectId}).exec()
         }catch(e){
             throw e
         }
