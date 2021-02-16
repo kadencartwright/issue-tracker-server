@@ -47,7 +47,7 @@ export default class TicketService{
 
     updateTicket:(id:ObjectId, changes:Partial<ITicket>) =>Promise<ITicketDocument> = async function (id:ObjectId, changes:Partial<ITicket>){
         try{
-            return await TicketModel.findByIdAndUpdate(id,changes).exec()
+            return await TicketModel.findByIdAndUpdate(id,changes,{useFindAndModify:false}).exec()
         }catch(e){
             throw e
         }

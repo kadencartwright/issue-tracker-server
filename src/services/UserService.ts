@@ -30,7 +30,7 @@ export default class AuthService{
 
     updateUser:(id:ObjectId, changes:Partial<IUser>) =>Promise<IUserDocument> = async function (id:ObjectId, changes:Partial<IUser>){
         try{
-            return await UserModel.findByIdAndUpdate(id,{...changes}).exec()
+            return await UserModel.findByIdAndUpdate(id,{...changes},{useFindAndModify:false}).exec()
         }catch(e){
             throw e
         }

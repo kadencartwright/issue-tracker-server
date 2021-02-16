@@ -17,7 +17,6 @@ export const connectDB:(uri:string)=>Promise<mongoose.Connection> =  async (uri?
     }
     
     database = mongoose.connection
-    console.log('Mongo Connected!')
     database.on('error',(err)=>{
         console.log('mongo error')
         console.log(err)
