@@ -40,7 +40,7 @@ export default class CommentService{
 
     updateComment:(id:ObjectId, changes:Partial<ICommentDocument>) =>Promise<ICommentDocument> = async function (id:ObjectId, changes:Partial<IComment>){
         try{
-            return await CommentModel.findByIdAndUpdate(id,changes).exec()
+            return await CommentModel.findByIdAndUpdate(id,changes,{useFindAndModify:false}).exec()
         }catch(e){
             throw e
         }
