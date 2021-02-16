@@ -18,8 +18,6 @@ const initUsers:()=>void = async function(){
     }
 
     await UserModel.create(users)
-    let output = JSON.stringify(users)
-    fs.writeFileSync('./users.json',output)
     return users
 }
 

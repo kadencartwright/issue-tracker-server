@@ -13,7 +13,7 @@ export const connectDB:(uri:string)=>Promise<mongoose.Connection> =  async (uri?
             useCreateIndex: true,
         })
     }catch(e){
-        console.log(e)
+        throw(e)
     }
     
     database = mongoose.connection

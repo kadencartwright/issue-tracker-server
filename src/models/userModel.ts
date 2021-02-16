@@ -1,14 +1,18 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
 import bcrypt from "bcrypt"
-import { IProjectSubset, ProjectSubsetSchema } from "./ProjectModel"
+import { IProjectSubset } from "./ProjectModel"
+import {ProjectSubsetSchema} from './SubsetSchemas'
 
 //interface for the user itself.
-export interface IUser extends Document{
+export interface IUser{
     name: String
     email: String,
     password: String,
-    projects:IUsersProjects
+    projects?:IUsersProjects
+}
+export interface IUserDocument extends IUser, Document{
+
 }
 export interface IUsersProjects{
     develops: Array<IProjectSubset>,
@@ -18,7 +22,7 @@ export interface IUsersProjects{
 
 
 //interface for the model itself to give us type checking on the model
-export interface IUserModel extends Model<IUser> {}
+export interface IUserModel extends Model<IUserDocument> {}
 
 /**
  * SETTER FUNCTIONS FOR THE SCHEMA
@@ -42,7 +46,7 @@ const options:SchemaOptions = {
     },
     timestamps:true
 }
-const UserSchema = new Schema<IUser, IUserModel>({
+const UserSchema = new Schema<IUserDocument, IUserModel>({
     name:{type:String,required: true},
     email:{type:String,required: true , unique:true , set:toLower},
     projects:{
@@ -54,16 +58,10 @@ const UserSchema = new Schema<IUser, IUserModel>({
 
    
 },options)
-
-//a schema for the other collections that use this document
-export const UserSubsetSchema = new Schema({
-    name: { type:"string", required:true },
-    id: { type:Types.ObjectId, ref:"User", required:true }
-})
 //the associated interface
 export interface IUserSubset{
     name: String,
     id: {type:ObjectId}
 }
 
-export default model<IUser>("User",UserSchema)
+export default model<IUserDocument>("User",UserSchema)

@@ -1,8 +1,8 @@
-import TicketModel, { ITicket, ITicketDocument } from '../models/TicketModel';
-import faker, { fake } from 'faker'
-import UserModel, { IUser, IUserSubset } from '../models/UserModel'
+import TicketModel, { ITicket} from '../models/TicketModel';
+import faker from 'faker'
+import UserModel, { IUserSubset } from '../models/UserModel'
 import ProjectModel, { IProjectDocument } from '../models/ProjectModel';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
     const initTickets:()=>void = async function(){
         console.log('creating fake Tickets')
@@ -26,7 +26,7 @@ import { ObjectId, Types } from 'mongoose';
             }
         }
         await TicketModel.create(tickets)
-        await TicketModel.find({}).exec()
+        return tickets
         
     }
 

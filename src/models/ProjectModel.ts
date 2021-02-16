@@ -1,14 +1,17 @@
-import { Document, Model, model, Schema, SchemaOptions,Types, UpdateQuery} from "mongoose"
-import { IpcNetConnectOpts } from "net"
-import UserModel, { IUser, IUserModel, IUserSubset, UserSubsetSchema } from "./UserModel"
+import { Document, Model, model, Schema, SchemaOptions,Types} from "mongoose"
+import UserModel, { IUserDocument, IUserSubset} from "./UserModel"
+import {UserSubsetSchema} from './SubsetSchemas'
 //interface for the Project itself.
-export interface IProject extends Document{
+export interface IProject {
     projectName:String,
     owner: IUserSubset,
     personnel:{
         managers: Array<IUserSubset>,
         developers: Array<IUserSubset>
     }
+
+}
+export interface IProjectDocument extends IProject, Document{
     addDeveloper: (user:IProject) => Promise<IProject>,
     removeDeveloper: (user:IProject) => Promise<IProject>,
     addManager: (user:IProject) => Promise<IProject>,
@@ -19,31 +22,28 @@ export interface IProject extends Document{
 
 
 //interface for the model itself to give us type checking on the model
-export interface IProjectModel extends Model<IProject> {
+export interface IProjectModel extends Model<IProjectDocument> {
     
 }
 
 //helpers for objects that ref this object
 export interface IProjectSubset {
-    name: IProject['projectName'],
-    id: IProject['id']
+    name: IProjectDocument['projectName'],
+    id: IProjectDocument['id']
 }
-export const ProjectSubsetSchema = new Schema({
-    name: { type:"string", required:true },
-    id: { type:Types.ObjectId, ref:"Project", required:true }
-})
+
 /**
  * SCHEMA DECLARATIONS
  */
 const options:SchemaOptions = {
     timestamps:true
 }
-const ProjectSchema = new Schema<IProject, IProjectModel>({
+const ProjectSchema = new Schema<IProjectDocument, IProjectModel>({
     projectName: {type:String, required:true},
-    owner: UserSubsetSchema,
+    owner: {type: UserSubsetSchema, required:true },
     personnel: {
-        managers:[ UserSubsetSchema ],
-        developers: [ UserSubsetSchema ]
+        managers:[ {type: UserSubsetSchema} ],
+        developers: [ {type: UserSubsetSchema} ]
     }
 },options)
 
@@ -54,7 +54,7 @@ const ProjectSchema = new Schema<IProject, IProjectModel>({
 
 //here we use instance methods on the project schema and the user schema to give similar functionality
 //to SQL CASCADE's
-const addDeveloper: (this:IProject, userSubset:IUserSubset) => Promise<IProject>  = async function(this:IProject, userSubset:IUserSubset){
+const addDeveloper: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProjectDocument>  = async function(this:IProjectDocument, userSubset:IUserSubset){
     let currentDevs = this.personnel.developers
     for (let dev of currentDevs){
         if (dev.id == userSubset.id){
@@ -71,7 +71,7 @@ const addDeveloper: (this:IProject, userSubset:IUserSubset) => Promise<IProject>
     try{
     await this.save()
         //get user so we can update through the model instead of sending a query
-    let  user:IUser = await UserModel.findById(userSubset.id)
+    let  user:IUserDocument = await UserModel.findById(userSubset.id)
     user.projects.develops.push(this.getSubset())
     await user.save();
     return this
@@ -79,7 +79,7 @@ const addDeveloper: (this:IProject, userSubset:IUserSubset) => Promise<IProject>
         throw e
     }
 }
-const removeDeveloper: (this:IProject, userSubset:IUserSubset) => Promise<IProject>  = async function(this:IProject, userSubset:IUserSubset){
+const removeDeveloper: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProject>  = async function(this:IProjectDocument, userSubset:IUserSubset){
     let found: boolean = false
     let currentDevs = this.personnel.developers
 
@@ -95,7 +95,7 @@ const removeDeveloper: (this:IProject, userSubset:IUserSubset) => Promise<IProje
         this.personnel.developers = this.personnel.developers.filter(x=>{x.id!=userSubset.id})
         try{
             this.save()
-            let  user:IUser = await UserModel.findById(userSubset.id)
+            let  user:IUserDocument = await UserModel.findById(userSubset.id)
             user.projects.develops = user.projects.develops.filter(x=>{x.id!= this.id})
             user.save()
         }catch(e){
@@ -120,7 +120,7 @@ const setOwner: (this:IProject, user:IUserSubset) => Promise<IProject>  = async 
     return this
 }
 
-const getSubset: (this:IProject)=> IProjectSubset = function(this:IProject){ 
+const getSubset: (this:IProjectDocument)=> IProjectSubset = function(this:IProjectDocument){ 
     return{
         id: this.id,
         name: this.projectName
@@ -138,4 +138,4 @@ ProjectSchema.method('getSubset',getSubset)
 
 
 
-export default model<IProject>("Project",ProjectSchema)
+export default model<IProjectDocument>("Project",ProjectSchema)

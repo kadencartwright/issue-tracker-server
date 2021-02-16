@@ -1,16 +1,18 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
-import { IUserSubset, UserSubsetSchema } from "./UserModel"
+import { IUserSubset} from "./UserModel"
+import {UserSubsetSchema} from './SubsetSchemas'
 //interface for the Ticket itself.
-export interface ITicket extends Document{
+export interface ITicket{
     projectId: ObjectId
     title: String,
     assignedTo: IUserSubset,
     description: String
 }
+export interface ITicketDocument extends ITicket,Document{}
 
 //interface for the model itself to give us type checking on the model
-export interface ITicketModel extends Model<ITicket> {}
+export interface ITicketModel extends Model<ITicketDocument> {}
 
 /**
  * SCHEMA DECLARATIONS
@@ -18,7 +20,7 @@ export interface ITicketModel extends Model<ITicket> {}
 const options:SchemaOptions = {
     timestamps:true
 }
-const TicketSchema = new Schema<ITicket, ITicketModel>({
+const TicketSchema = new Schema<ITicketDocument, ITicketModel>({
     projectId: {type: Types.ObjectId, ref:"Projects"},
     title: {type: String, required: true},
     assignedTo: UserSubsetSchema,
@@ -26,4 +28,4 @@ const TicketSchema = new Schema<ITicket, ITicketModel>({
 },options)
 
 
-export default model<ITicket>("Ticket",TicketSchema)
+export default model<ITicketDocument>("Ticket",TicketSchema)
