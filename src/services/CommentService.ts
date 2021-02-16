@@ -46,11 +46,10 @@ export default class CommentService{
         }
     }
 
-    deleteComment:(id:ObjectId)=>Promise<Boolean> = async function(id:ObjectId){
+    deleteComment:(id:ObjectId)=>void = async function(id:ObjectId){
         try{
             if (id !=undefined){
-                await CommentModel.findByIdAndDelete(id)
-                return true
+                return await CommentModel.deleteOne({_id:id}).exec()
             }
         }catch(e){
             throw e

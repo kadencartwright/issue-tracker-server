@@ -40,7 +40,7 @@ export default class ProjectService{
     deleteProject:(id:ObjectId)=>void = async function(id:ObjectId){
         try{
             if (id !=undefined){
-                return await ProjectModel.deleteOne({_Id:id}).exec()
+                return await ProjectModel.deleteOne({_id:id}).exec()
             }
         }catch(e){
             throw e
