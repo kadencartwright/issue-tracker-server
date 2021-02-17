@@ -1,6 +1,6 @@
 import Express from "express";
 import dotenv from 'dotenv';
-import {connectDB,disconnectDB} from "./database"
+
 import router,{openRoutes} from './routes/router'
 import jwt from 'express-jwt'
 dotenv.config()
@@ -13,15 +13,6 @@ app.use(jwt({
 }).unless({path:[...openRoutes]}))
 app.use('/',router)
 
-app.listen(PORT,async ()=>{
-    await connectDB(process.env.MONGO_STRING)
 
-    console.log(`Server is running on http://localhost:${PORT}`)
-})
 
-//close connection on process interrupt
-process.on('SIGINT',async ()=>{
-    await disconnectDB()
-    process.exit(0)
-})
-
+export default app
