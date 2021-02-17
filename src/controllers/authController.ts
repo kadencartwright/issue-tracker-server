@@ -12,9 +12,12 @@ const loginHandler:(req:Request,res:Response)=>void = async(req:Request,res:Resp
     const authService:AuthService = Container.get(AuthService)
     const creds:ILogin = {email:req.body.email,password: req.body.password}
     let token =(await authService.login(creds))
-    if(!token) {res.status(404).send()}
+    if(!token) {
+        res.status(401).send()
+    }else{
+        res.status(200).json({token:token})
+    }
     
-    res.json({token:token})
     //need to set token or cookie
 }
 const loginValidator:Array<ValidationChain>=[
