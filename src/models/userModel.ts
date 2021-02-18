@@ -12,6 +12,7 @@ export interface IUser{
     projects?:IUsersProjects
 }
 export interface IUserDocument extends IUser, Document{
+    getSubset: ()=>IUserSubset
 
 }
 export interface IUsersProjects{
@@ -58,7 +59,26 @@ const UserSchema = new Schema<IUserDocument, IUserModel>({
 
    
 },options)
-//the associated interface
+
+/**
+ * DOCUMENT METHODS
+ */
+
+//method declarations
+const getSubset: (this:IUserDocument)=>IUserSubset = function(this:IUserDocument){
+    const subset:IUserSubset = {
+        name: this.name,
+        id: this._id
+    }
+    return subset
+}
+//attach methods to schema below
+UserSchema.method('getSubset',getSubset)
+
+
+
+
+//the associated subset interface
 export interface IUserSubset{
     name: String,
     id: {type:ObjectId}
