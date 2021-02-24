@@ -2,8 +2,10 @@ import { Request,Response } from 'express';
 import {Container} from 'typedi'
 import {body, check,param,ValidationChain} from 'express-validator'
 import CommentService from '../services/CommentService';
-import { IComment} from '../models/CommentModel';
+import CommentModel, { IComment, ICommentDocument} from '../models/CommentModel';
 import { ObjectId } from 'mongodb';
+import UserModel, { IUserDocument } from '../models/UserModel';
+import TicketModel from '../models/TicketModel';
 /**
  * the structure of this controller is such that any function that depends on validation of parameters should define BOTH 
  *      a handler function 
@@ -11,19 +13,35 @@ import { ObjectId } from 'mongodb';
  */
 
 const createCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
+    const commentService:CommentService = Container.get(CommentService)
+    let author:IUserDocument 
+    let comment:IComment
+
     try{
-        const comment:IComment = req.body.comment
-        const commentService:CommentService = Container.get(CommentService)
-        const commentDoc:IComment = await commentService.createComment(comment)
-        res.json(commentDoc)
+        author = await UserModel.findById(req.body.authorId).exec()
+        comment = {
+            ticketId: req.body.ticketId,
+            content: req.body.content,
+            author: author.getSubset()
+        }
+        if (!!req.body.parent){
+            comment.parent = req.body.parent
+        }
+        const commentDoc:ICommentDocument = await commentService.createComment(comment)
+        res.json({
+            message:'Comment created',
+            id: commentDoc.id
+        })
     }catch(e){
-        console.log(e)
-        res.status(500).send('whoops, there was an error on our end. Try your request again.')
+        res.status(400).send({error: `Invalid ticket or author ID param`})
     }
+
 }
 const createCommentValidator:Array<ValidationChain>=[
     check('content').exists().isString().escape().trim(),
-    check('author').exists(),
+    check('authorId').exists().isMongoId(),
+    check('ticketId').exists().isMongoId(),
+    check('parent').isMongoId()
 ]
 
 const updateCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{

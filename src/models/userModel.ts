@@ -12,7 +12,7 @@ export interface IUser{
     projects?:IUsersProjects
 }
 export interface IUserDocument extends IUser, Document{
-    getSubset: ()=>IUserSubset
+    getSubset: (this:IUserDocument)=>IUserSubset
 
 }
 export interface IUsersProjects{

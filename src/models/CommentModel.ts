@@ -1,14 +1,15 @@
 import { ObjectId } from "mongodb"
 import { Document, Model, model, Schema, SchemaOptions ,Types} from "mongoose"
-import { IUserSubset } from "./UserModel"
+import UserModel, { IUserSubset } from "./UserModel"
 import {UserSubsetSchema} from './SubsetSchemas'
+import TicketModel from "./TicketModel"
+import { userInfo } from "os"
 //interface for the Comment itself.
 export interface IComment{
     ticketId: ObjectId
     content:String,
     author: IUserSubset,
     parent?: ObjectId,
-    children?: Array<ObjectId>
 
 }
 export interface ICommentDocument extends IComment,Document{
@@ -30,7 +31,27 @@ const CommentSchema = new Schema<ICommentDocument, ICommentModel>({
     content:{type:String, required:true},
     author: UserSubsetSchema,
     parent: {type: Types.ObjectId, ref:"User" },
-    children: [{type: Types.ObjectId, ref:"User" }]
 }, options)
 
+
+
+/**
+ * MIDDLEWARES
+ */
+
+CommentSchema.pre('save', async function (){
+    let exists = true
+    let authorId = this.get('author.id')
+    let ticketId = this.get('ticketId')
+    if(this.isModified('author')){
+        exists = exists && await UserModel.exists({_id:authorId})
+    }
+    if (this.isModified('ticketId')){
+        exists = exists && await TicketModel.exists({_id:ticketId})
+    }
+    
+    if(!exists){
+        throw new Error('referenced author does not exist')
+    }
+})
 export default model<ICommentDocument>("Comment",CommentSchema)
