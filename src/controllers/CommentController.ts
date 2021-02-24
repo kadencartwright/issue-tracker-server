@@ -79,6 +79,7 @@ const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res
         const commentId:ObjectId = new ObjectId(req.params.id)
         const commentService:CommentService = Container.get(CommentService)
         const comment = await commentService.findCommentById(commentId)
+        if (!comment){ throw new Error('no comment found for this ID')}
         res.status(200).json(comment)
     }catch(e){
         console.error(e)
