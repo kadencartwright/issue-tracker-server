@@ -23,7 +23,7 @@ apiRouter.post('/login', AuthController.login.validator, AuthController.login.ha
 //comment crud routes
 apiRouter.get('/comments/:id', CommentController.getComment.handler)
 apiRouter.post('/comments',CommentController.createComment.validator, CommentController.createComment.handler)
-apiRouter.put('/comments', CommentController.updateComment.validator, CommentController.updateComment.handler)
+apiRouter.put('/comments/:id', CommentController.updateComment.validator, CommentController.updateComment.handler)
 apiRouter.delete('/comments/:id', CommentController.deleteComment.validator, CommentController.deleteComment.handler)
 
 //user crud routes

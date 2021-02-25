@@ -1,9 +1,9 @@
-import { Request,Response } from 'express';
+import e, { Request,Response } from 'express';
 import {Container} from 'typedi'
-import {body, check,param,ValidationChain} from 'express-validator'
+import {body, check,param,ValidationChain, validationResult} from 'express-validator'
 import CommentService from '../services/CommentService';
 import CommentModel, { IComment, ICommentDocument} from '../models/CommentModel';
-import { ObjectId } from 'mongodb';
+import { ObjectId, UpdateWriteOpResult } from 'mongodb';
 import UserModel, { IUserDocument } from '../models/UserModel';
 import TicketModel from '../models/TicketModel';
 /**
@@ -16,58 +16,82 @@ const createCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
     const commentService:CommentService = Container.get(CommentService)
     let author:IUserDocument 
     let comment:IComment
+    const err = validationResult(req)
+    if (err.isEmpty()){
 
-    try{
-        author = await UserModel.findById(req.body.authorId).exec()
-        comment = {
-            ticketId: req.body.ticketId,
-            content: req.body.content,
-            author: author.getSubset()
+        try{
+            author = await UserModel.findById(req.body.authorId).exec()
+            comment = {
+                ticketId: req.body.ticketId,
+                content: req.body.content,
+                author: author.getSubset()
+            }
+            if (!!req.body.parent){
+                comment.parent = req.body.parent
+            }
+            const commentDoc:ICommentDocument = await commentService.createComment(comment)
+            res.json({
+                message:'Comment created',
+                id: commentDoc.id
+            })
+        }catch(e){
+            res.status(400).send({error: `Invalid ticket or author ID param`})
         }
-        if (!!req.body.parent){
-            comment.parent = req.body.parent
-        }
-        const commentDoc:ICommentDocument = await commentService.createComment(comment)
-        res.json({
-            message:'Comment created',
-            id: commentDoc.id
-        })
-    }catch(e){
-        res.status(400).send({error: `Invalid ticket or author ID param`})
+    }else{
+        res.status(400).json(err.mapped())
     }
 
 }
 const createCommentValidator:Array<ValidationChain>=[
-    check('content').exists().isString().escape().trim(),
+    check('content').exists().isString().escape().trim().notEmpty({ignore_whitespace:true}),
     check('authorId').exists().isMongoId(),
     check('ticketId').exists().isMongoId(),
-    check('parent').isMongoId()
+    check('parent').optional().isMongoId()
 ]
 
 const updateCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const commentId:ObjectId = req.body.commentId
-    const updates:Partial<IComment> = {
-        content:req.body.content
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        const commentId:ObjectId = new ObjectId(req.params.id)
+        const updates:Partial<IComment> = {
+            content:req.body.content
+        }
+        const commentService:CommentService = Container.get(CommentService)
+        try{
+            let updateStatus:UpdateWriteOpResult['result']= await commentService.updateComment(commentId,updates)
+            
+            if (updateStatus.nModified == 0){
+                throw new Error('No document modified')
+            }
+
+            res.status(204).json({message:'updated comment successfully'})
+        }catch(e){
+            console.error(e)
+            res.status(404).json({message:'the resource could not be found'})
+        }
+    }else{
+        res.status(400).json(err.mapped())
     }
-    const commentService:CommentService = Container.get(CommentService)
-    const commentDoc:IComment = await commentService.updateComment(commentId,updates)
-    res.json(commentDoc)
+    
 }
 const updateCommentValidator:Array<ValidationChain>=[
     //need custom sanitizer
-    body('content').exists().isString().escape().trim(),
+    body('content').exists().isString().notEmpty({ignore_whitespace:true}).escape().trim(),
     param('id').exists().isMongoId()
 ]
 
 const deleteCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const commentId:ObjectId = req.body.commentId
-    const commentService:CommentService = Container.get(CommentService)
-    try{
-        await commentService.deleteComment(commentId)
-        res.status(200).send()
-    }catch(e){
-        console.error(e)
-        res.status(404).send()
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        const commentId:ObjectId = req.body.commentId
+        const commentService:CommentService = Container.get(CommentService)
+        try{
+            await commentService.deleteComment(commentId)
+            res.status(200).send()
+        }catch(e){
+            console.error(e)
+            res.status(404).json(err.mapped())
+        }
     }
 }
 const deleteCommentValidator:Array<ValidationChain>=[
@@ -75,15 +99,18 @@ const deleteCommentValidator:Array<ValidationChain>=[
 ]
 
 const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    try{
-        const commentId:ObjectId = new ObjectId(req.params.id)
-        const commentService:CommentService = Container.get(CommentService)
-        const comment = await commentService.findCommentById(commentId)
-        if (!comment){ throw new Error('no comment found for this ID')}
-        res.status(200).json(comment)
-    }catch(e){
-        console.error(e)
-        res.status(404).send()
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        try{
+            const commentId:ObjectId = new ObjectId(req.params.id)
+            const commentService:CommentService = Container.get(CommentService)
+            const comment = await commentService.findCommentById(commentId)
+            if (!comment){ throw new Error('no comment found for this ID')}
+            res.status(200).json(comment)
+        }catch(e){
+            console.error(e)
+            res.status(404).json(err.mapped())
+        }
     }
 }
 const getCommentValidator:Array<ValidationChain>=[
