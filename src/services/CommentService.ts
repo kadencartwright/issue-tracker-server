@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, UpdateWriteOpResult } from 'mongodb';
 import {Service} from 'typedi';
 import CommentModel, {IComment, ICommentDocument} from "../models/CommentModel"
 import { IUserSubset } from '../models/UserModel';
@@ -38,7 +38,7 @@ export default class CommentService{
         }
     }
 
-    updateComment:(id:ObjectId, changes:Partial<ICommentDocument>) =>Promise<ICommentDocument> = async function (id:ObjectId, changes:Partial<IComment>){
+    updateComment:(id:ObjectId, changes:Partial<ICommentDocument>) =>Promise<UpdateWriteOpResult['result']> = async function (id:ObjectId, changes:Partial<IComment>){
         try{
             return await CommentModel.updateOne({_id:id},changes).exec()
         }catch(e){
@@ -46,10 +46,10 @@ export default class CommentService{
         }
     }
 
-    deleteComment:(id:ObjectId)=>void = async function(id:ObjectId){
+    deleteComment:(id:ObjectId)=>Promise<ICommentDocument>= async function(id:ObjectId){
         try{
             if (id !=undefined){
-                return await CommentModel.deleteOne({_id:id}).exec()
+                return await CommentModel.findByIdAndDelete(id).exec()
             }
         }catch(e){
             throw e

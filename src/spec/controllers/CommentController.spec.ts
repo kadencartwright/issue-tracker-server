@@ -5,7 +5,7 @@ import { connectDB } from '../../database'
 import TicketModel, { ITicketDocument } from '../../models/TicketModel'
 import {IUser} from '../../models/UserModel'
 import {ILogin} from '../../services/AuthService'
-import CommentModel, { ICommentDocument } from '../../models/CommentModel'
+import CommentModel, { IComment, ICommentDocument } from '../../models/CommentModel'
 import { ObjectId, ObjectID } from 'mongodb'
 describe('CommentController tests',()=>{
     let testData = JSON.parse(fs.readFileSync('testData.json').toString())
@@ -126,6 +126,7 @@ describe('CommentController tests',()=>{
             expect(response.status).toBe(404)
         })
         test('should fail upon invalid id format', async()=>{
+
             let response:supertest.Response = (await request.get(`/api/v1/comments/de7c2e89e26d3d1834a`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
             expect(response.status).toBe(404)
         })
@@ -133,21 +134,74 @@ describe('CommentController tests',()=>{
     })
 
     describe('PUT /comments tests',()=>{
-        test('Should update comment successfully',()=>{
+        test('Should update comment successfully', async ()=>{
+            let update:Partial<IComment> = {
+                content: 'test test 1234'
+            }
+            let response:supertest.Response = (await request.put(`/api/v1/comments/${testComment.id}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(204)
 
         })
-        test('Should return ... upon invalid request',()=>{
-            
+        test('Should return 404 upon invalid comment ID', async()=>{
+            let update:Partial<IComment> = {
+                content:testComment.content
+            }
+            let response:supertest.Response = (await request.put(`/api/v1/comments/${new ObjectId()}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(404)
+        })
+
+        test('Should return 400 if comment content empty', async ()=>{
+            let update = {
+                content: '  '
+            }
+            let response:supertest.Response = (await request.put(`/api/v1/comments/${testComment.id}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(400)
+        })
+
+
+        test('Should return 400 if content missing', async ()=>{
+            let update = {}
+            let response:supertest.Response = (await request.put(`/api/v1/comments/${testComment.id}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(400)
+        })
+        test('Should ignore extra params', async ()=>{
+            let update = {
+                content: content,
+                ticketId: testTicket.id,
+                authorId: testTicket.assignedTo.id,
+                extraParam: 'testtesttest'
+            }
+            let response:supertest.Response = (await request.put(`/api/v1/comments/${testComment.id}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(204)
+
         })
     })
 
     describe('DELETE /comments/:id tests',()=>{
-        test('Should delete comment successfully',()=>{
+        test('Should delete comment successfully', async ()=>{
+            let commentToDeleteContent = 'this is a test comment to be deleted immediately 12345678ASDEMCNDFASGDFDSGASDG'
+            let comment = {
+                ticketId: testComment.ticketId,
+                content: commentToDeleteContent,
+                authorId: testTicket.assignedTo.id
+            }
+            let commentToDelete:supertest.Response = (await request.post('/api/v1/comments').send(comment).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            let response:supertest.Response = (await request.delete(`/api/v1/comments/${commentToDelete.body.id}`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(204)
 
         })
-        test('Should return ... upon invalid request',()=>{
+        test('Should return 404 upon id that doesnt exist', async ()=>{
+            let response:supertest.Response = (await request.delete(`/api/v1/comments/${new ObjectId().toHexString()}`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(404)
+
             
         })
+        test('Should return 400 upon invalid id format', async()=>{
+            let response:supertest.Response = (await request.delete(`/api/v1/comments/invalidIDformat`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            expect(response.status).toBe(400)
+        })
+
+
     })
     afterAll(async ()=>{
         await CommentModel.deleteMany({content:content})

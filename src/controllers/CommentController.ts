@@ -83,19 +83,26 @@ const updateCommentValidator:Array<ValidationChain>=[
 const deleteCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
     const err = validationResult(req)
     if(err.isEmpty()){
-        const commentId:ObjectId = req.body.commentId
+        const commentId:ObjectId = new ObjectId(req.params.id)
         const commentService:CommentService = Container.get(CommentService)
         try{
-            await commentService.deleteComment(commentId)
-            res.status(200).send()
+            let deletedOne = await commentService.deleteComment(commentId)
+            if (!deletedOne){
+                throw new Error('Document not found')
+            }
+
+            res.status(204).send()
         }catch(e){
             console.error(e)
-            res.status(404).json(err.mapped())
+            res.status(404).json({error:'the comment you referenced does not exist'})
         }
+    }else{
+        res.status(400).json(err.mapped())
+
     }
 }
 const deleteCommentValidator:Array<ValidationChain>=[
-    check('commentId').exists().isMongoId()
+    param('id').exists().isMongoId()
 ]
 
 const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
