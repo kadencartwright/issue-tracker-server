@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, UpdateWriteOpResult } from 'mongodb';
 import Container, {Service} from 'typedi';
 import TicketModel, {ITicket, ITicketDocument} from "../models/TicketModel"
 import {IUserSubset} from '../models/UserModel'
@@ -45,7 +45,7 @@ export default class TicketService{
         }
     }
 
-    updateTicket:(id:ObjectId, changes:Partial<ITicket>) =>Promise<ITicketDocument> = async function (id:ObjectId, changes:Partial<ITicket>){
+    updateTicket:(id:ObjectId, changes:Partial<ITicket>) =>Promise<UpdateWriteOpResult['result']> = async function (id:ObjectId, changes:Partial<ITicket>){
         try{
             return await TicketModel.findByIdAndUpdate(id,changes,{useFindAndModify:false}).exec()
         }catch(e){
