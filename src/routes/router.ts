@@ -44,7 +44,7 @@ apiRouter.delete('/projects/:id',ProjectController.deleteProject.validator,Proje
 
 apiRouter.get('/tickets/:id',TicketController.getTicket.validator,TicketController.getTicket.handler)
 apiRouter.post('/tickets',TicketController.createTicket.validator,TicketController.createTicket.handler)
-apiRouter.put('/tickets',TicketController.updateTicket.validator,TicketController.updateTicket.handler)
+apiRouter.put('/tickets/:id',TicketController.updateTicket.validator,TicketController.updateTicket.handler)
 apiRouter.delete('/tickets/:id',TicketController.deleteTicket.validator,TicketController.deleteTicket.handler)
 
 //self routes
