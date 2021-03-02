@@ -76,7 +76,7 @@ describe('TicketService tests', ()=>{
         let result
         test('should delete the ticket',async ()=>{
             result = await ticketService.deleteTicket(testTicketDoc.id)
-            expect(result).toBeTruthy()
+            expect(result.n).toBeTruthy()
         })
     
         test('should return error if the ticket does not exist',async ()=>{
