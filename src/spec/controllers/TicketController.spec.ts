@@ -99,20 +99,23 @@ describe('TicketController tests',()=>{
             }
             let response:supertest.Response = (await request.put(`/api/v1/tickets/${testTicket.id}`).send(update).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
             expect(response.status).toBe(204)
+
         })
 
     })
-/*
     describe('DELETE /tickets/:id tests',()=>{
         test('Should delete ticket successfully', async ()=>{
             let ticketToDeleteContent = 'this is a test ticket to be deleted immediately 12345678ASDEMCNDFASGDFDSGASDG'
             let ticket = {
-                projectId: testComment.projectId,
-                content: ticketToDeleteContent,
+                title: testTicket.title,
+                projectId: testTicket.projectId,
+                description: ticketToDeleteContent,
                 authorId: testTicket.assignedTo.id
             }
             let ticketToDelete:supertest.Response = (await request.post('/api/v1/tickets').send(ticket).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
-            let response:supertest.Response = (await request.delete(`/api/v1/tickets/${ticketToDelete.body.id}`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            let response:supertest.Response = (await request.delete(`/api/v1/tickets/${ticketToDelete.body._id}`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
+            console.log(ticketToDelete.body._id)
+            console.log(response.body)
             expect(response.status).toBe(204)
 
         })
@@ -126,10 +129,8 @@ describe('TicketController tests',()=>{
             let response:supertest.Response = (await request.delete(`/api/v1/tickets/invalidIDformat`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
             expect(response.status).toBe(400)
         })
-
-
     })
-    */
+
     afterAll(async ()=>{
         await TicketModel.deleteMany({title:title})
     })

@@ -3,7 +3,7 @@ import {Container} from 'typedi'
 import {body, check,param,ValidationChain, validationResult} from 'express-validator'
 import TicketService from '../services/TicketService';
 import { ITicket} from '../models/TicketModel';
-import { ObjectId } from 'mongodb';
+import { DeleteWriteOpResultObject, ObjectId } from 'mongodb';
 import UserModel, { IUser, IUserDocument, IUserModel } from '../models/UserModel';
 
 /**
@@ -116,8 +116,9 @@ const deleteTicketHandler:(req:Request,res:Response)=>void = async(req:Request,r
         const ticketId:ObjectId = new ObjectId(req.params.id)
         const ticketService:TicketService = Container.get(TicketService)
         try{
-            await ticketService.deleteTicket(ticketId)
-            res.status(200).send()
+            let result:DeleteWriteOpResultObject['result'] = await ticketService.deleteTicket(ticketId)
+            if(result.n == 0 || result == undefined){ throw new Error('Delete failed')}
+            res.status(204).json({message:'Deleted Ticket Successfully'})
         }catch(e){
             console.error(e)
             res.status(404).send()
@@ -127,7 +128,7 @@ const deleteTicketHandler:(req:Request,res:Response)=>void = async(req:Request,r
     }
 }
 const deleteTicketValidator:Array<ValidationChain>=[
-    param('ticketId').exists().isMongoId()
+    param('id').exists().isMongoId()
 ]
 
 

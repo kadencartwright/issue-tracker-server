@@ -1,4 +1,4 @@
-import { ObjectId, UpdateWriteOpResult } from 'mongodb';
+import { DeleteWriteOpResultObject, ObjectId, UpdateWriteOpResult } from 'mongodb';
 import Container, {Service} from 'typedi';
 import TicketModel, {ITicket, ITicketDocument} from "../models/TicketModel"
 import {IUserSubset} from '../models/UserModel'
@@ -53,10 +53,11 @@ export default class TicketService{
         }
     }
 
-    deleteTicket:(id:ObjectId)=>void = async function(id:ObjectId){
+    deleteTicket:(id:ObjectId)=>Promise<DeleteWriteOpResultObject['result']> = async function(id:ObjectId){
         try{
             if (id !=undefined){
-                return await TicketModel.deleteOne({_id:id}).exec()
+                let res:DeleteWriteOpResultObject['result'] = await TicketModel.remove({_id:id}).exec()
+                return res
             }
         }catch(e){
             throw e
