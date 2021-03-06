@@ -114,8 +114,6 @@ describe('TicketController tests',()=>{
             }
             let ticketToDelete:supertest.Response = (await request.post('/api/v1/tickets').send(ticket).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
             let response:supertest.Response = (await request.delete(`/api/v1/tickets/${ticketToDelete.body._id}`).set('Accept', 'application/json').set('Authorization',`Bearer ${token}`))
-            console.log(ticketToDelete.body._id)
-            console.log(response.body)
             expect(response.status).toBe(204)
 
         })
