@@ -1,7 +1,7 @@
 import { ObjectId, UpdateWriteOpResult } from 'mongodb';
 import {Service} from 'typedi';
 import CommentModel, {IComment, ICommentDocument} from "../models/CommentModel"
-import { IUserSubset } from '../models/UserModel';
+import { IUserSubset } from '../models/SubsetSchemas';
 
 @Service()
 export default class CommentService{

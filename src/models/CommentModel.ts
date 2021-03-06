@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import { Document, Model, model, Schema, SchemaOptions ,Types} from "mongoose"
-import UserModel, { IUserSubset } from "./UserModel"
-import {UserSubsetSchema} from './SubsetSchemas'
+import UserModel  from "./UserModel"
+import {IUserSubset, UserSubsetSchema} from './SubsetSchemas'
 import TicketModel from "./TicketModel"
 import { userInfo } from "os"
 //interface for the Comment itself.

@@ -1,7 +1,7 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
-import UserModel, { IUserSubset} from "./UserModel"
-import {UserSubsetSchema} from './SubsetSchemas'
+import UserModel from "./UserModel"
+import {UserSubsetSchema,IUserSubset} from './SubsetSchemas'
 import ProjectModel from "./ProjectModel"
 //interface for the Ticket itself.
 export interface ITicket{
