@@ -37,8 +37,12 @@ apiRouter.delete('/users/:id',UserController.deleteUser.validator,UserController
 apiRouter.get('/projects',ProjectController.getProjects.validator,ProjectController.getProjects.handler)
 apiRouter.get('/projects/:id',ProjectController.getProject.validator,ProjectController.getProject.handler)
 apiRouter.post('/projects',ProjectController.createProject.validator,ProjectController.createProject.handler)
-apiRouter.put('/projects',ProjectController.updateProject.validator,ProjectController.updateProject.handler)
+apiRouter.put('/projects/:id',ProjectController.updateProject.validator,ProjectController.updateProject.handler)
 apiRouter.delete('/projects/:id',ProjectController.deleteProject.validator,ProjectController.deleteProject.handler)
+apiRouter.delete('/projects/:projectId/managers/:userId',ProjectController.deleteManager.validator,ProjectController.deleteManager.handler)
+apiRouter.delete('/projects/:projectId/developers/:userId',ProjectController.deleteDeveloper.validator,ProjectController.deleteDeveloper.handler)
+apiRouter.post('/projects/:projectId/managers/:userId',ProjectController.addManager.validator,ProjectController.addManager.handler)
+apiRouter.post('/projects/:projectId/developers/:userId',ProjectController.addDeveloper.validator,ProjectController.addDeveloper.handler)
 
 //ticket crud routes
 
