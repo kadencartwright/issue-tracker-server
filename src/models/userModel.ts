@@ -1,8 +1,8 @@
 import { Document, Model, model, Types, Schema, SchemaOptions } from "mongoose"
 import { ObjectId } from "mongodb"
 import bcrypt from "bcrypt"
-import { IProjectSubset } from "./ProjectModel"
-import {ProjectSubsetSchema} from './SubsetSchemas'
+
+import {IProjectSubset, IUserSubset, ProjectSubsetSchema} from './SubsetSchemas'
 
 //interface for the user itself.
 export interface IUser{
@@ -78,10 +78,6 @@ UserSchema.method('getSubset',getSubset)
 
 
 
-//the associated subset interface
-export interface IUserSubset{
-    name: String,
-    id: {type:ObjectId}
-}
+
 
 export default model<IUserDocument>("User",UserSchema)

@@ -1,22 +1,22 @@
 import { Document, Model, model, Schema, SchemaOptions,Types} from "mongoose"
-import UserModel, { IUserDocument, IUserSubset} from "./UserModel"
-import {UserSubsetSchema} from './SubsetSchemas'
+import UserModel, { IUserDocument} from "./UserModel"
+import {IProjectSubset, IUserSubset, UserSubsetSchema} from './SubsetSchemas'
 //interface for the Project itself.
 export interface IProject {
     projectName:String,
-    owner: IUserSubset,
-    personnel:{
-        managers: Array<IUserSubset>,
-        developers: Array<IUserSubset>
+    owner?: IUserSubset,
+    personnel?:{
+        managers?: Array<IUserSubset>,
+        developers?: Array<IUserSubset>
     }
 
 }
 export interface IProjectDocument extends IProject, Document{
-    addDeveloper: (user:IProject) => Promise<IProject>,
-    removeDeveloper: (user:IProject) => Promise<IProject>,
-    addManager: (user:IProject) => Promise<IProject>,
-    removeManager: (user:IProject) => Promise<IProject>,
-    setOwner: (user:IProject) => Promise<IProject>,
+    addDeveloper: (this:IProjectDocument, user:IUserSubset) => Promise<IProjectDocument>,
+    removeDeveloper: (this:IProjectDocument, user:IUserSubset) => Promise<IProjectDocument>,
+    addManager: (this:IProjectDocument, user:IUserSubset) => Promise<IProjectDocument>,
+    removeManager: (this:IProjectDocument, user:IUserSubset) => Promise<IProjectDocument>,
+    setOwner: (this:IProjectDocument, user:IUserSubset) => Promise<IProjectDocument>,
     getSubset: ()=> IProjectSubset
 }
 
@@ -26,11 +26,6 @@ export interface IProjectModel extends Model<IProjectDocument> {
     
 }
 
-//helpers for objects that ref this object
-export interface IProjectSubset {
-    name: IProjectDocument['projectName'],
-    id: IProjectDocument['id']
-}
 
 /**
  * SCHEMA DECLARATIONS
@@ -40,12 +35,13 @@ const options:SchemaOptions = {
 }
 const ProjectSchema = new Schema<IProjectDocument, IProjectModel>({
     projectName: {type:String, required:true},
-    owner: {type: UserSubsetSchema, required:true },
+    owner: {type: UserSubsetSchema },
     personnel: {
         managers:[ {type: UserSubsetSchema} ],
         developers: [ {type: UserSubsetSchema} ]
     }
 },options)
+
 
 /**
  * INSTANCE METHODS
@@ -56,10 +52,11 @@ const ProjectSchema = new Schema<IProjectDocument, IProjectModel>({
 //to SQL CASCADE's
 const addDeveloper: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProjectDocument>  = async function(this:IProjectDocument, userSubset:IUserSubset){
     let currentDevs = this.personnel.developers
+
     for (let dev of currentDevs){
-        if (dev.id == userSubset.id){
+        if (dev.id.equals(userSubset.id)){
             //user already is in list of devs, so we will return the document unchanged
-            return this
+            throw new Error('User is already Developer on the project')
         }
     }
     //add as developer and update user doc to contain this project
@@ -82,41 +79,84 @@ const addDeveloper: (this:IProjectDocument, userSubset:IUserSubset) => Promise<I
 const removeDeveloper: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProject>  = async function(this:IProjectDocument, userSubset:IUserSubset){
     let found: boolean = false
     let currentDevs = this.personnel.developers
-
     for (let dev of currentDevs){
-        if (dev.id == userSubset.id){
+        if (dev.id.equals(userSubset.id)){
             found = true;
         }
     }
     if(!found){
-        //user already is not in the list so we will do nothing
-        return this
+        //user already is not in the list so we will throw an error 
+        throw new Error("No Developer matching that id was found on this project")
     }else{
-        this.personnel.developers = this.personnel.developers.filter(x=>{x.id!=userSubset.id})
+        this.personnel.developers = this.personnel.developers.filter(x=>{!x.id.equals(userSubset.id)})
         try{
             this.save()
             let  user:IUserDocument = await UserModel.findById(userSubset.id)
-            user.projects.develops = user.projects.develops.filter(x=>{x.id!= this.id})
+            user.projects.develops = user.projects.develops.filter(x=>{!x.id.equals(this.id)})
             user.save()
         }catch(e){
             throw e
         }
-
-
     }
-
-
     return this
 }
-const addManager: (this:IProject, user:IUserSubset) => Promise<IProject>  = async function(this:IProject, user:IUserSubset){
+const addManager: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProjectDocument>  = async function(this:IProjectDocument, userSubset:IUserSubset){
+    let currentManagers = this.personnel.managers
 
+    for (let manager of currentManagers){
+        if (manager.id.equals(userSubset.id)){
+            //user already is in list of managers, so we will return the document unchanged
+            throw new Error('User is already a Manager on the project')
+        }
+    }
+    //add as manager and update user doc to contain this project
+    this.personnel.managers = [
+        ...this.personnel.managers,
+        userSubset
+    ]
+    
+    try{
+    await this.save()
+        //get user so we can update through the model instead of sending a query
+    let  user:IUserDocument = await UserModel.findById(userSubset.id)
+    user.projects.manages.push(this.getSubset())
+    await user.save();
+    return this
+    }catch(e){
+        throw e
+    }
+}
+const removeManager: (this:IProjectDocument, userSubset:IUserSubset) => Promise<IProject>  = async function(this:IProjectDocument, userSubset:IUserSubset){
+    let found: boolean = false
+    let currentManagers = this.personnel.managers
+    for (let manager of currentManagers){
+        if (manager.id.equals(userSubset.id)){
+            found = true;
+        }
+    }
+    if(!found){
+        //user already is not in the list so we will throw an error 
+        throw new Error("No Manager matching that id was found on this project")
+    }else{
+        this.personnel.managers = this.personnel.managers.filter(x=>{!x.id.equals(userSubset.id)})
+        try{
+            this.save()
+            let  user:IUserDocument = await UserModel.findById(userSubset.id)
+            user.projects.manages = user.projects.manages.filter(x=>{!x.id.equals(this.id)})
+            user.save()
+        }catch(e){
+            throw e
+        }
+    }
     return this
 }
-const removeManager: (this:IProject, user:IUserSubset) => Promise<IProject>  = async function(this:IProject, user:IUserSubset){
-    return this
-}
 
-const setOwner: (this:IProject, user:IUserSubset) => Promise<IProject>  = async function(this:IProject, user:IUserSubset){
+const setOwner: (this:IProjectDocument, user:IUserSubset) => Promise<IProject>  = async function(this:IProjectDocument, user:IUserSubset){
+    if (this.owner.id.equals(user.id)){
+        throw new Error("User is already Project owner")
+    }
+    this.owner = user
+    await this.save()
     return this
 }
 
