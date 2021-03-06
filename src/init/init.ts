@@ -31,7 +31,7 @@ export default async function initDb(){
 (async ()=>{
         await connectDB(process.env.MONGO_STRING_TEST)
         let data = JSON.stringify(await initDb())
-        //fs.writeFileSync('testData.json',data)
+        fs.writeFileSync('testData.json',data)
         disconnectDB()
         process.exit()
     }

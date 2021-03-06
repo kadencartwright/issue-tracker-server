@@ -66,7 +66,7 @@ const updateCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
 
             res.status(204).json({message:'updated comment successfully'})
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).json({message:'the resource could not be found'})
         }
     }else{
@@ -93,7 +93,7 @@ const deleteCommentHandler:(req:Request,res:Response)=>void = async(req:Request,
 
             res.status(204).send()
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).json({error:'the comment you referenced does not exist'})
         }
     }else{
@@ -115,7 +115,7 @@ const getCommentHandler:(req:Request,res:Response)=>void = async(req:Request,res
             if (!comment){ throw new Error('no comment found for this ID')}
             res.status(200).json(comment)
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).json(err.mapped())
         }
     }

@@ -29,7 +29,7 @@ const createTicketHandler:(req:Request,res:Response)=>void = async(req:Request,r
             const ticketDoc:ITicket = await ticketService.createTicket(ticket)
             res.status(200).json(ticketDoc)
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).json({error:'one of the object refs did not exist'})
         }
 
@@ -56,7 +56,7 @@ const getTicketHandler:(req:Request,res:Response)=>void = async(req:Request,res:
             }
             res.status(200).json(ticket)
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).send()
         }
     }else{
@@ -93,7 +93,7 @@ const updateTicketHandler:(req:Request,res:Response)=>void = async(req:Request,r
             }
             res.status(204).send()
         }catch(e){
-            console.log(e)
+            //console.error(e)
             res.status(404).json({error:'Resource was not found'})
         }
     }else{
@@ -120,7 +120,7 @@ const deleteTicketHandler:(req:Request,res:Response)=>void = async(req:Request,r
             if(result.n == 0 || result == undefined){ throw new Error('Delete failed')}
             res.status(204).json({message:'Deleted Ticket Successfully'})
         }catch(e){
-            console.error(e)
+            //console.error(e)
             res.status(404).send()
         }
     }else{

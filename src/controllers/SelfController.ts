@@ -16,7 +16,7 @@ const getSelfProjectsHandler:(req:Request,res:Response)=>void = async(req:Reques
         const project = await projectService.findProjects({})
         res.status(200).json(project)
     }catch(e){
-        console.error(e)
+        //console.error(e)
         res.status(404).send()
     }
 }
@@ -31,7 +31,7 @@ const getSelfTicketsHandler:(req:Request,res:Response)=>void = async(req:Request
         const project = await projectService.findProjectById(projectId)
         res.status(200).json(project)
     }catch(e){
-        console.error(e)
+        //console.error(e)
         res.status(404).send()
     }
 }

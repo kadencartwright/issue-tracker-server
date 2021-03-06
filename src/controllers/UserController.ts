@@ -35,7 +35,7 @@ const getUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Re
         const user = await userService.findUserById(userId)
         res.status(200).json(user)
     }catch(e){
-        console.error(e)
+        //console.error(e)
         res.status(404).send()
     }
 }
@@ -81,7 +81,7 @@ const deleteUserHandler:(req:Request,res:Response)=>void = async(req:Request,res
         await userService.deleteUser(userId)
         res.status(200).send()
     }catch(e){
-        console.error(e)
+        //console.error(e)
         res.status(404).send()
     }
 }
