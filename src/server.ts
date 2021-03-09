@@ -7,7 +7,7 @@ const PORT = process.env.PORT
 
 
 app.listen(PORT,async ()=>{
-    await connectDB(process.env.MONGO_STRING)
+    await connectDB(process.env.MONGO_STRING_DEV)
     console.log(`Server is running on http://localhost:${PORT}`)
 })
 

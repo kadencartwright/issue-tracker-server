@@ -1,6 +1,7 @@
 import ProjectModel, { IProject} from '../models/ProjectModel';
 import faker from 'faker'
-import UserModel, { IUserDocument, IUserSubset } from '../models/UserModel'
+import UserModel, { IUserDocument } from '../models/UserModel'
+import { IUserSubset } from '../models/SubsetSchemas';
 
     const initProjects:()=>void = async function(){
         console.log('creating fake Projects')

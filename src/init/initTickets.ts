@@ -1,8 +1,9 @@
 import TicketModel, { ITicket} from '../models/TicketModel';
 import faker from 'faker'
-import UserModel, { IUserSubset } from '../models/UserModel'
+import UserModel from '../models/UserModel'
 import ProjectModel, { IProjectDocument } from '../models/ProjectModel';
 import { Types } from 'mongoose';
+import { IUserSubset } from '../models/SubsetSchemas';
 
     const initTickets:()=>void = async function(){
         console.log('creating fake Tickets')

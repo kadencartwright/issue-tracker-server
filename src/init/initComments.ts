@@ -1,7 +1,7 @@
 import CommentModel, { IComment} from '../models/CommentModel';
 
 import faker from 'faker'
-import TicketModel, { ITicket, ITicketDocument } from '../models/TicketModel';
+import TicketModel, { ITicketDocument } from '../models/TicketModel';
 
     const initComments:()=>void = async function(){
         console.log('creating fake Comments')

@@ -1,8 +1,8 @@
 import { Request,Response } from 'express';
 import {Container} from 'typedi'
-import {body, check,CustomValidator,param,ValidationChain} from 'express-validator'
+import {body, check,CustomValidator,param,ValidationChain, validationResult} from 'express-validator'
 import UserService from '../services/UserService';
-import { IUser } from '../models/UserModel';
+import { IUser, IUserDocument } from '../models/UserModel';
 import { ObjectId } from 'mongodb';
 import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/schema';
 /**
@@ -15,28 +15,39 @@ import { Schema, ValidatorsSchema } from 'express-validator/src/middlewares/sche
  */
 
 const createUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const user:IUser = req.body
-    const userService:UserService = Container.get(UserService)
-    const userDoc:IUser = await userService.createUser(user)
-    res.json(userDoc)
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        const user:IUser = req.body
+        const userService:UserService = Container.get(UserService)
+        const userDoc:IUserDocument = await userService.createUser(user)
+        res.status(200).json(userDoc.getSubset())
+    }else{
+        res.status(400).send(err.mapped())
+    }
+    
 }
 const createUserValidator:Array<ValidationChain>=[
     check('email').exists().isEmail().normalizeEmail().trim(),
     check('name').exists().isAlphanumeric().trim(),
-    check('password').exists().isLength({max:256,min:8}).trim().escape()
+    check('password').exists().isLength({max:256,min:8}).trim()
 ]
 /**
  * READ
  */
 const getUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    try{
-        const userId:ObjectId = new ObjectId(req.params.id)
-        const userService:UserService = Container.get(UserService)
-        const user = await userService.findUserById(userId)
-        res.status(200).json(user)
-    }catch(e){
-        //console.error(e)
-        res.status(404).send()
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        try{
+            const userId:ObjectId = new ObjectId(req.params.id)
+            const userService:UserService = Container.get(UserService)
+            const user = await userService.findUserById(userId)
+            res.status(200).json(user)
+        }catch(e){
+            //console.error(e)
+            res.status(404).json({error:"A User with that ID was not found"})
+        }
+    }else{
+        res.status(400).json(err.mapped())
     }
 }
 const getUserValidator:Array<ValidationChain> = [
@@ -47,21 +58,27 @@ const getUserValidator:Array<ValidationChain> = [
  */
 
 const updateUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const userId:ObjectId = req.body.userId
+    const err = validationResult(req)
+    if(err.isEmpty()){
 
-    const updates:Partial<IUser> = {
-    }
-    req.body.name ? updates.name = req.body.name: null ;
-    req.body.email ? updates.email = req.body.email: null ;
-    req.body.password ? updates.password = req.body.password: null ;
-    
-    const userService:UserService = Container.get(UserService)
-    try{
-        await userService.updateUser(userId,updates)
-        res.status(204).send()
-    }catch(e){
-        console.log(e)
-        res.status(404).send('Resource was not found')
+        const userId:ObjectId = req.body.userId
+
+        const updates:Partial<IUser> = {
+        }
+        if ('name' in req.body){updates.name = req.body.name}
+        if ('email' in req.body){updates.email = req.body.email}
+        if ('password' in req.body){updates.password = req.body.password}
+        
+        const userService:UserService = Container.get(UserService)
+        try{
+            await userService.updateUser(userId,updates)
+            res.status(204).send()
+        }catch(e){
+            console.log(e)
+            res.status(404).send('Resource was not found')
+        }
+    }else{
+        res.status(400).json(err.mapped())
     }
 }
 
@@ -69,24 +86,29 @@ const updateUserValidator:Array<ValidationChain>=[
     body('email').optional().isEmail().normalizeEmail().trim().optional(),
     body('name').optional().isAlphanumeric().trim(),
     body('password').optional().isLength({max:256,min:8}).trim().escape(),
-    param('userId').exists().isMongoId(),
+    param('id').exists().isMongoId(),
 ]
 /**
  * DELETE
  */
 const deleteUserHandler:(req:Request,res:Response)=>void = async(req:Request,res:Response)=>{
-    const userId:ObjectId = new ObjectId(req.params.id)
-    const userService:UserService = Container.get(UserService)
-    try{
-        await userService.deleteUser(userId)
-        res.status(200).send()
-    }catch(e){
-        //console.error(e)
-        res.status(404).send()
+    const err = validationResult(req)
+    if(err.isEmpty()){
+        const userId:ObjectId = new ObjectId(req.params.id)
+        const userService:UserService = Container.get(UserService)
+        try{
+            await userService.deleteUser(userId)
+            res.status(204).send()
+        }catch(e){
+            //console.error(e)
+            res.status(404).send()
+        }
+    }else{
+        res.status(400).json(err.mapped())
     }
 }
 const deleteUserValidator:Array<ValidationChain>=[
-    param('userId').exists().isMongoId()
+    param('id').exists().isMongoId()
 ]
 
 
