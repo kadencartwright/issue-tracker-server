@@ -184,12 +184,10 @@ describe('ProjectService tests', ()=>{
             }catch(e){
                 console.error(e)
             }
-
             expect(exists).toBeFalsy()
         })
         test('Should throw error if manager does not exist', async()=>{
             let error
-
             try{
                 await projectService.removeManager(testProjectDoc.id,testProject.owner.id)
 
@@ -226,7 +224,6 @@ describe('ProjectService tests', ()=>{
             result = await projectService.deleteProject(testProjectDoc.id)
             expect(result).toBeTruthy()
         })
-    
         test('should return error if the project does not exist',async ()=>{
             let err = {}
             try{

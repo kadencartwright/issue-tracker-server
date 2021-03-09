@@ -145,7 +145,9 @@ const removeManager: (this:IProjectDocument, userSubset:IUserSubset) => Promise<
             user.projects.manages = user.projects.manages.filter(x=>{!x.id.equals(this.id)})
             user.save()
         }catch(e){
-            throw e
+            console.error(e)
+            throw new Error('Issue occurred while Saving. pleas try again')
+            
         }
     }
     return this

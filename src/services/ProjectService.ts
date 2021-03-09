@@ -1,4 +1,4 @@
-import { ObjectId, UpdateWriteOpResult } from 'mongodb';
+import { DeleteWriteOpResultObject, ObjectId, UpdateWriteOpResult } from 'mongodb';
 import {Service} from 'typedi';
 import ProjectModel, {IProject, IProjectDocument} from "../models/ProjectModel"
 import UserModel, { IUserDocument } from '../models/UserModel';
@@ -45,10 +45,15 @@ export default class ProjectService{
     }
     
 
-    deleteProject:(id:ObjectId)=>void = async function(id:ObjectId){
+    deleteProject:(id:ObjectId)=>Promise<UpdateWriteOpResult['result']> = async function(id:ObjectId){
         try{
             if (id !=undefined){
-                return await ProjectModel.deleteOne({_id:id}).exec()
+                let result:UpdateWriteOpResult['result'] = await ProjectModel.deleteOne({_id:id}).exec()
+                if(result.n == 0){
+                    //throw an error if no doc gets deleted
+                    throw new Error('No Document Deleted')
+                }
+                return result
             }
         }catch(e){
             throw e
