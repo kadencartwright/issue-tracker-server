@@ -1,6 +1,6 @@
 import UserModel,{IUser,IUserDocument } from '../models/UserModel'
 import {Service} from 'typedi';
-import { ObjectId } from 'mongodb';
+import { DeleteWriteOpResultObject, ObjectId, UpdateWriteOpResult } from 'mongodb';
 
 @Service()
 export default class AuthService{
@@ -14,7 +14,9 @@ export default class AuthService{
     }
     findUserById: (id:ObjectId) => Promise<IUserDocument> = async function(id:ObjectId){
         try{
-            return await UserModel.findOne({_id:id}).exec()
+            let user:IUserDocument = await UserModel.findOne({_id:id}).exec()
+            if(!user){throw new Error('No user found with that ID')}
+            return user
         }catch(e){
             throw e
         }
@@ -35,11 +37,16 @@ export default class AuthService{
             throw e
         }
     }
-    deleteUser:(id:ObjectId)=>void = async function(id:ObjectId){
+    deleteUser:(id:ObjectId)=>Promise<DeleteWriteOpResultObject['result']> = async function(id:ObjectId){
         try{
+            let result:DeleteWriteOpResultObject['result']
             if (id !=undefined){
-                return await UserModel.deleteOne({_id:id}).exec()
+                result = await UserModel.deleteOne({_id:id}).exec()
             }
+            if(!result.n){
+                throw new Error('Could not find the referenced Object')
+            }
+            return result
         }catch(e){
             throw e
         }

@@ -10,7 +10,8 @@ const apiRouter:Router = Router();
 //use apiRouter as an abstraction for the `/api/v1` prefix so we only have to write it once
 export const openRoutes = [
     "/api/v1/login",
-    "/"
+    "/",
+    "/api/v1/users/newuser"
 ]
 router.use('/api/v1',apiRouter)
 
@@ -29,8 +30,8 @@ apiRouter.delete('/comments/:id', CommentController.deleteComment.validator, Com
 //user crud routes
 
 apiRouter.get('/users/:id',UserController.getUser.validator,UserController.getUser.handler)
-apiRouter.post('/users',UserController.createUser.validator,UserController.createUser.handler)
-apiRouter.put('/users',UserController.updateUser.validator,UserController.updateUser.handler)
+apiRouter.post('/users/newuser',UserController.createUser.validator,UserController.createUser.handler)
+apiRouter.put('/users/:id',UserController.updateUser.validator,UserController.updateUser.handler)
 apiRouter.delete('/users/:id',UserController.deleteUser.validator,UserController.deleteUser.handler)
 
 //project crud routes
